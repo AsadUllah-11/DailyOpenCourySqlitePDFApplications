@@ -1,0 +1,215 @@
+.cases-counter-container {
+    width: 100%;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  
+  .counter-card {
+    width: 100%;
+    max-width: 600px;
+    background: linear-gradient(#050f2e 0.84%, #869ec5);
+    border-radius: 20px;
+    padding: 2.5rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    box-shadow: 0 20px 60px rgba(30, 64, 175, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    color: white;
+    animation: slideUp 0.8s ease-out;
+    transition: 0.5s ease-out;
+
+  }
+  .counter-card:hover{
+    
+      border-color: #dbe7f1;
+      box-shadow: 0 4px 18px 0 rgba(0, 0, 0, 0.25);
+     
+  }
+
+  
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .counter-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  }
+  
+  .counter-content {
+    flex: 1;
+    text-align: left;
+  }
+  
+  .counter-label {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0 0 1rem;
+    opacity: 0.95;
+    letter-spacing: 0.5px;
+  }
+  
+  .counter-display {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .counter-number {
+    font-size: 3.5rem;
+    font-weight: 900;
+    line-height: 1;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    letter-spacing: -2px;
+  }
+  
+  .counter-refresh {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+  }
+  
+  .counter-refresh:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(180deg);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .counter-refresh:active {
+    transform: rotate(180deg) scale(0.95);
+  }
+  
+  .counter-loading {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+  
+  .spinner {
+    width: 30px;
+    height: 30px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .counter-loading p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin: 0;
+  }
+  
+  .counter-error {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1rem 0;
+    color: #fecaca;
+  }
+  
+  .counter-error p {
+    margin: 0;
+    font-size: 1rem;
+  }
+  
+  .counter-subtitle {
+    font-size: 0.95rem;
+    opacity: 0.85;
+    margin: 0;
+    font-weight: 500;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .counter-card {
+      flex-direction: column;
+      text-align: center;
+      gap: 1.5rem;
+      padding: 2rem;
+    }
+  
+    .counter-content {
+      text-align: center;
+    }
+  
+    .counter-icon {
+      width: 70px;
+      height: 70px;
+    }
+  
+    .counter-number {
+      font-size: 3rem;
+    }
+  
+    .counter-label {
+      font-size: 1.1rem;
+    }
+  
+    .counter-display {
+      justify-content: center;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .counter-card {
+      padding: 1.5rem;
+      gap: 1rem;
+    }
+  
+    .counter-icon {
+      width: 60px;
+      height: 60px;
+    }
+  
+    .counter-number {
+      font-size: 2.5rem;
+    }
+  
+    .counter-label {
+      font-size: 1rem;
+    }
+  
+    .counter-refresh {
+      width: 45px;
+      height: 45px;
+      font-size: 1.2rem;
+    }
+  }

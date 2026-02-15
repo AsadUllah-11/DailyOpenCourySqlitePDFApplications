@@ -1,0 +1,716 @@
+/* ========================================
+   PDF APPLICATIONS PAGE - SCOPED STYLES
+   ======================================== */
+
+.pdf-applications-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ==================== HEADER ==================== */
+
+.pdf-applications-container .pdf-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.pdf-applications-container .pdf-title-section {
+  flex: 1;
+}
+
+.pdf-applications-container .pdf-title-section h1 {
+  font-size: 28px;
+  margin-bottom: 4px;
+  color: #1a1a1a;
+  font-weight: 700;
+}
+
+.pdf-applications-container .subtitle {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+}
+
+/* ==================== STATS CARD (COMPACT BADGE) ==================== */
+
+.pdf-applications-container .stats-cards {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 0;
+  margin-right: 12px;
+  max-width: none;
+}
+
+.pdf-applications-container .stat-card {
+  background: #eff6ff;
+  padding: 6px 12px;
+  border-radius: 20px;
+  box-shadow: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #bfdbfe;
+  min-width: auto;
+  max-width: none;
+}
+
+.pdf-applications-container .stat-icon {
+  font-size: 16px;
+  color: #3b82f6;
+  flex-shrink: 0;
+}
+
+.pdf-applications-container .stat-card h3 {
+  font-size: 16px;
+  margin: 0;
+  color: #1e40af;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.pdf-applications-container .stat-card p {
+  margin: 0;
+  color: #1e40af;
+  font-size: 11px;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.pdf-applications-container .stat-card > div {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ==================== BUTTONS ==================== */
+
+.pdf-applications-container .btn-upload-primary {
+  padding: 12px 24px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+  white-space: nowrap;
+}
+
+.pdf-applications-container .btn-upload-primary:hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.4);
+}
+
+.pdf-applications-container .btn-upload-primary:active {
+  transform: translateY(0);
+}
+
+.pdf-applications-container .btn-upload-secondary {
+  margin-top: 16px;
+  padding: 12px 24px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.pdf-applications-container .btn-upload-secondary:hover {
+  background: #2563eb;
+}
+
+.pdf-applications-container .btn-primary {
+  padding: 12px 24px;
+  border-radius: 6px;
+  border: none;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+  background: #3b82f6;
+  color: white;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+}
+
+.pdf-applications-container .btn-primary:hover:not(:disabled) {
+  background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5);
+}
+
+.pdf-applications-container .btn-primary:disabled {
+  background: #93c5fd;
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+  box-shadow: none;
+}
+
+.pdf-applications-container .btn-secondary {
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+  background: #f3f4f6;
+  color: #1a1a1a;
+  border: 1px solid #e5e7eb;
+}
+
+.pdf-applications-container .btn-secondary:hover:not(:disabled) {
+  background: #e5e7eb;
+}
+
+.pdf-applications-container .btn-verify {
+  padding: 10px 20px;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.pdf-applications-container .btn-verify:hover:not(:disabled) {
+  background: #059669;
+}
+
+.pdf-applications-container .btn-verify:disabled {
+  background: #93c5fd;
+  cursor: not-allowed;
+}
+
+.pdf-applications-container .btn-icon {
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: all 0.2s;
+  flex: 1;
+}
+
+.pdf-applications-container .btn-view {
+  background: #e0f2fe;
+  color: #0c4a6e;
+  border: 2px solid #3b82f6;
+}
+
+.pdf-applications-container .btn-view:hover {
+  background: #3b82f6;
+  color: white;
+  border-color: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.pdf-applications-container .btn-view:active {
+  transform: translateY(0);
+}
+
+.pdf-applications-container .btn-delete {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.pdf-applications-container .btn-delete:hover {
+  background: #fecaca;
+}
+
+/* ==================== SEARCH BAR ==================== */
+
+.pdf-applications-container .search-bar {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.pdf-applications-container .search-bar input {
+  width: 100%;
+  padding: 12px 12px 12px 40px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.pdf-applications-container .search-bar input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.pdf-applications-container .search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
+}
+
+/* ==================== MODAL ==================== */
+
+.pdf-applications-container .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.pdf-applications-container .modal-content {
+  background: white;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.pdf-applications-container .modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 10;
+  border-radius: 16px 16px 0 0;
+}
+
+.pdf-applications-container .modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.pdf-applications-container .close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.pdf-applications-container .close-btn:hover {
+  background: #f3f4f6;
+  color: #000;
+}
+
+.pdf-applications-container .modal-body {
+  padding: 24px;
+}
+
+.pdf-applications-container .modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  position: sticky;
+  bottom: 0;
+  background: white;
+  border-radius: 0 0 16px 16px;
+}
+
+/* ==================== FORM ELEMENTS ==================== */
+
+.pdf-applications-container .form-step {
+  margin-bottom: 24px;
+}
+
+.pdf-applications-container .form-step h3 {
+  font-size: 16px;
+  margin-bottom: 16px;
+  color: #3b82f6;
+  font-weight: 600;
+}
+
+.pdf-applications-container .form-group {
+  margin-bottom: 16px;
+}
+
+.pdf-applications-container .form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
+  font-size: 14px;
+}
+
+.pdf-applications-container .form-group input:not(.hidden-file-input),
+.pdf-applications-container .form-group textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.pdf-applications-container .form-group input:focus,
+.pdf-applications-container .form-group textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.pdf-applications-container .form-group textarea {
+  resize: vertical;
+}
+
+.pdf-applications-container .input-group {
+  display: flex;
+  gap: 8px;
+}
+
+.pdf-applications-container .input-group input {
+  flex: 1;
+}
+
+/* ==================== APPLICATION DETAILS ==================== */
+
+.pdf-applications-container .application-details {
+  background: #f0fdf4;
+  border: 2px solid #86efac;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 12px;
+}
+
+.pdf-applications-container .success-icon {
+  color: #22c55e;
+  font-size: 24px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.pdf-applications-container .details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  font-size: 14px;
+}
+
+.pdf-applications-container .details-grid strong {
+  color: #166534;
+  font-weight: 600;
+}
+
+.pdf-applications-container .status-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  background: #dbeafe;
+  color: #1e40af;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* ==================== FILE UPLOAD ==================== */
+
+.pdf-applications-container .file-upload-wrapper {
+  margin-bottom: 12px;
+}
+
+.pdf-applications-container .hidden-file-input {
+  position: absolute;
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.pdf-applications-container .file-upload-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 24px;
+  background: #3b82f6;
+  border: 2px solid #3b82f6;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 15px;
+  font-weight: 600;
+  color: white;
+  user-select: none;
+}
+
+.pdf-applications-container .file-upload-label:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.pdf-applications-container .file-upload-label:active {
+  transform: scale(0.98);
+}
+
+.pdf-applications-container .file-upload-label svg {
+  color: white;
+  flex-shrink: 0;
+}
+
+.pdf-applications-container .file-hint {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 8px 0 0 0;
+  font-style: italic;
+  text-align: center;
+}
+
+.pdf-applications-container .file-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 16px;
+  background: #ecfdf5;
+  border: 1px solid #86efac;
+  border-radius: 8px;
+  font-size: 14px;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pdf-applications-container .file-info svg {
+  color: #22c55e;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.pdf-applications-container .file-name {
+  flex: 1;
+  font-weight: 500;
+  color: #166534;
+  word-break: break-word;
+}
+
+.pdf-applications-container .file-size {
+  color: #6b7280;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* ==================== PDF GRID ==================== */
+
+.pdf-applications-container .pdf-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.pdf-applications-container .pdf-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+  border: 1px solid #e5e7eb;
+}
+
+.pdf-applications-container .pdf-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  border-color: #3b82f6;
+}
+
+.pdf-applications-container .pdf-icon {
+  color: #ef4444;
+  margin-bottom: 12px;
+}
+
+.pdf-applications-container .pdf-info h3 {
+  font-size: 16px;
+  margin-bottom: 12px;
+  color: #1a1a1a;
+  word-break: break-word;
+  font-weight: 600;
+}
+
+.pdf-applications-container .pdf-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: #666;
+}
+
+.pdf-applications-container .pdf-description {
+  font-size: 13px;
+  color: #666;
+  margin: 12px 0;
+  padding-top: 12px;
+  border-top: 1px solid #eee;
+  font-style: italic;
+}
+
+.pdf-applications-container .pdf-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
+}
+
+/* ==================== ALERTS ==================== */
+
+.pdf-applications-container .alert {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.pdf-applications-container .alert-error {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.pdf-applications-container .alert-success {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #86efac;
+}
+
+/* ==================== LOADING & NO DATA ==================== */
+
+.pdf-applications-container .loading {
+  text-align: center;
+  padding: 64px 24px;
+  color: #666;
+  font-size: 16px;
+}
+
+.pdf-applications-container .no-data {
+  text-align: center;
+  padding: 64px 24px;
+  color: #666;
+}
+
+.pdf-applications-container .no-data svg {
+  color: #d1d5db;
+  margin-bottom: 16px;
+}
+
+.pdf-applications-container .no-data p {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+/* ==================== RESPONSIVE ==================== */
+
+@media (max-width: 768px) {
+  .pdf-applications-container .pdf-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pdf-applications-container .stats-cards {
+    margin-right: 0;
+    width: 100%;
+  }
+
+  .pdf-applications-container .stat-card {
+    flex: 1;
+  }
+
+  .pdf-applications-container .btn-upload-primary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .pdf-applications-container .pdf-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pdf-applications-container .details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pdf-applications-container .modal-content {
+    max-width: 100%;
+    margin: 0;
+    border-radius: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pdf-applications-container {
+    padding: 16px;
+  }
+
+  .pdf-applications-container .pdf-title-section h1 {
+    font-size: 24px;
+  }
+
+  .pdf-applications-container .stat-card h3 {
+    font-size: 20px;
+  }
+
+  .pdf-applications-container .stat-icon {
+    font-size: 20px;
+  }
+}
