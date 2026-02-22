@@ -1,19 +1,18 @@
 /* ==================== */
-/* PENDING POPUP NOTIFICATION */
+/* PENDING POPUP NOTIFICATION — COMPACT */
 /* ==================== */
 
 .pending-popup-overlay {
   position: fixed;
-  bottom: 2rem;
-  right: 2rem;
+  right: 20px;
   z-index: 1000;
-  animation: slideInRight 0.4s ease;
+  animation: slideInRight 0.35s ease;
 }
 
 @keyframes slideInRight {
   from {
     opacity: 0;
-    transform: translateX(60px);
+    transform: translateX(50px);
   }
   to {
     opacity: 1;
@@ -23,19 +22,18 @@
 
 .pending-popup-card {
   background: var(--white);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(30, 64, 175, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem 1.75rem;
-  min-width: 300px;
-  max-width: 360px;
-  border-left: 5px solid var(--warning);
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(30, 64, 175, 0.18), 0 1px 6px rgba(0, 0, 0, 0.08);
+  padding: 0.7rem 0.9rem 0.75rem;
+  width: 280px;
+  border-left: 4px solid var(--warning);
   position: relative;
 }
 
 .pending-popup-close {
   position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
+  top: 0.4rem;
+  right: 0.4rem;
   background: none;
   border: none;
   cursor: pointer;
@@ -43,7 +41,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.25rem;
+  padding: 0.2rem;
   border-radius: 50%;
   transition: background 0.2s, color 0.2s;
 }
@@ -56,16 +54,16 @@
 .pending-popup-header {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 0.75rem;
+  gap: 0.55rem;
+  margin-bottom: 0.45rem;
 }
 
 .pending-popup-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
+  width: 32px;
+  height: 32px;
   background: #fef3c7;
   border-radius: 50%;
   color: var(--warning);
@@ -73,56 +71,48 @@
 }
 
 .pending-popup-title {
-  font-size: 0.85rem;
+  font-size: 0.7rem;
   font-weight: 600;
   color: var(--text-secondary);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.pending-popup-count {
-  font-size: 1.75rem;
-  font-weight: 800;
-  color: var(--warning);
-  line-height: 1.1;
-}
-
-.pending-popup-body {
-  margin-bottom: 1.25rem;
-}
-
-.pending-popup-message {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text-primary);
+  letter-spacing: 0.04em;
   margin: 0;
 }
 
-.pending-popup-sub {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  margin: 0.25rem 0 0 0;
+.pending-popup-count {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--warning);
+  line-height: 1.1;
+  margin: 0;
+}
+
+.pending-popup-message {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 0.55rem 0;
 }
 
 .pending-popup-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.35rem;
   width: 100%;
-  padding: 0.7rem 1rem;
+  padding: 0.42rem 0.75rem;
   background: linear-gradient(135deg, var(--primary-blue), var(--light-blue));
   color: var(--white);
   border: none;
-  border-radius: 8px;
-  font-size: 0.95rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
   transition: opacity 0.2s, transform 0.15s;
 }
 
 .pending-popup-btn:hover {
-  opacity: 0.92;
+  opacity: 0.9;
   transform: translateY(-1px);
 }
 

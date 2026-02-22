@@ -11,7 +11,7 @@ from django.db.models import Count, Q, Sum
 from django.utils.dateparse import parse_date
 from django.contrib.auth.hashers import make_password
 from django.utils import timezone
-from datetime import datetime
+from datetime import datetime, date as date_class
 import openpyxl
 from django_filters import rest_framework as django_filters
 
@@ -26,6 +26,38 @@ from .pagination import StandardResultsPagination
 from .filters import OpenCourtApplicationFilter   
 
 User = get_user_model()
+
+
+def _apply_timeline_filter(queryset, timeline_param):
+    """Filter queryset by timeline status.
+    EXCEEDED: days elapsed since application date > allowed days
+    WITHIN:   days elapsed since application date <= allowed days
+    """
+    if timeline_param not in ('EXCEEDED', 'WITHIN'):
+        return queryset
+    today = date_class.today()
+    eligible = list(
+        queryset.filter(days__isnull=False, date__isnull=False)
+        .values_list('id', 'date', 'days')
+    )
+    if timeline_param == 'EXCEEDED':
+        ids = [pk for pk, d, n in eligible if d and n is not None and (today - d).days > n]
+    else:
+        ids = [pk for pk, d, n in eligible if d and n is not None and (today - d).days <= n]
+    return queryset.filter(id__in=ids)
+
+
+def _count_exceeded(queryset):
+    """Count applications whose time limit is exceeded."""
+    today = date_class.today()
+    apps_timeline = list(
+        queryset.filter(days__isnull=False, date__isnull=False)
+        .values_list('date', 'days')
+    )
+    return sum(
+        1 for d, n in apps_timeline
+        if d and n is not None and (today - d).days > n
+    )
 
 
 # ⚡ CUSTOM PAGINATION CLASS
@@ -151,6 +183,10 @@ class OpenCourtApplicationViewSet(viewsets.ModelViewSet):
         
         if user.role == 'STAFF' and user.police_station:
             queryset = queryset.filter(police_station__iexact=user.police_station.strip())
+        
+        # Timeline filter: EXCEEDED or WITHIN
+        timeline_param = self.request.query_params.get('timeline')
+        queryset = _apply_timeline_filter(queryset, timeline_param)
         
         return queryset
     
@@ -464,6 +500,9 @@ def dashboard_stats(request):
         'negative_feedback': queryset.filter(feedback='NEGATIVE').count(),
     }
     
+    # Count time-limit-exceeded applications (days elapsed > allowed days)
+    stats['time_limit_exceeded'] = _count_exceeded(queryset)
+    
     category_stats = list(
         queryset.values('category')
         .annotate(count=Count('id'))
@@ -679,6 +718,10 @@ def export_applications(request):
                 queryset = queryset.filter(date__lte=parsed_to_date)
         except:
             pass
+    
+    # Timeline filter: EXCEEDED or WITHIN
+    timeline_param = request.query_params.get('timeline')
+    queryset = _apply_timeline_filter(queryset, timeline_param)
     
     ordering = request.query_params.get('ordering', '-created_at')
     queryset = queryset.order_by(ordering)

@@ -3,43 +3,46 @@ import { useNavigate } from 'react-router-dom';
 import { X, Clock, ArrowRight } from 'lucide-react';
 import './PendingPopup.css';
 
-const PendingPopup = ({ pendingCount, onClose }) => {
+const PendingPopup = ({
+  pendingCount,
+  onClose,
+  label = 'Pending',
+  navigateTo = '/applications?status=PENDING',
+  bottomOffset = '20px',
+}) => {
   const navigate = useNavigate();
 
-  const handleViewPending = () => {
+  const handleView = () => {
     onClose();
-    navigate('/applications?status=PENDING');
+    navigate(navigateTo);
   };
 
   if (!pendingCount || pendingCount === 0) return null;
 
   return (
-    <div className="pending-popup-overlay">
+    <div className="pending-popup-overlay" style={{ bottom: bottomOffset }}>
       <div className="pending-popup-card">
         <button className="pending-popup-close" onClick={onClose} title="Close">
-          <X size={16} />
+          <X size={14} />
         </button>
 
         <div className="pending-popup-header">
           <div className="pending-popup-icon">
-            <Clock size={22} />
+            <Clock size={18} />
           </div>
           <div>
-            <p className="pending-popup-title">Pending Cases</p>
+            <p className="pending-popup-title">{label}</p>
             <p className="pending-popup-count">{pendingCount}</p>
           </div>
         </div>
 
-        <div className="pending-popup-body">
-          <p className="pending-popup-message">
-            You have {pendingCount} Pending {pendingCount === 1 ? 'Case' : 'Cases'}
-          </p>
-          <p className="pending-popup-sub">Tap below to review them now.</p>
-        </div>
+        <p className="pending-popup-message">
+          You have {pendingCount} {label} {pendingCount === 1 ? 'Case' : 'Cases'}
+        </p>
 
-        <button className="pending-popup-btn" onClick={handleViewPending}>
-          View Pending Cases
-          <ArrowRight size={16} />
+        <button className="pending-popup-btn" onClick={handleView}>
+          View Cases
+          <ArrowRight size={13} />
         </button>
       </div>
     </div>

@@ -30,6 +30,7 @@ const Dashboard = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showPendingPopup, setShowPendingPopup] = useState(false);
+  const [showExceededPopup, setShowExceededPopup] = useState(false);
 
   useEffect(() => {
     fetchStats();
@@ -41,6 +42,9 @@ const Dashboard = () => {
       setStats(data);
       if ((data?.overall_stats?.pending || 0) > 0) {
         setShowPendingPopup(true);
+      }
+      if ((data?.overall_stats?.time_limit_exceeded || 0) > 0) {
+        setShowExceededPopup(true);
       }
     } catch (error) {
       console.error('Error fetching stats:', error);
@@ -111,6 +115,18 @@ const Dashboard = () => {
         <PendingPopup
           pendingCount={stats?.overall_stats?.pending || 0}
           onClose={() => setShowPendingPopup(false)}
+          label="Pending"
+          navigateTo="/applications?status=PENDING"
+          bottomOffset="20px"
+        />
+      )}
+      {showExceededPopup && (
+        <PendingPopup
+          pendingCount={stats?.overall_stats?.time_limit_exceeded || 0}
+          onClose={() => setShowExceededPopup(false)}
+          label="Time Exceeded"
+          navigateTo="/applications?timeline=EXCEEDED"
+          bottomOffset={showPendingPopup ? '140px' : '20px'}
         />
       )}
       <div className="page-header">
