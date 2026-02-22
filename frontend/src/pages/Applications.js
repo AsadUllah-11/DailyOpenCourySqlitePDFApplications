@@ -635,7 +635,7 @@ const Applications = () => {
                 </tr>
               ) : (
                 applications.map((app) => (
-                  <tr key={app.id} className="data-row">
+                  <tr key={app.id} className={`data-row${app.status === 'PENDING' ? ' pending-row' : ''}`}>
                     <td className="cell-sr">{app.sr_no}</td>
                     <td className="cell-dairy">{app.dairy_no}</td>
                     <td className="cell-name">{app.name}</td>
