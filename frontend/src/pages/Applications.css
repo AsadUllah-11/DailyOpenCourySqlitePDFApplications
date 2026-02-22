@@ -1298,3 +1298,273 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+/* ⭐ PDF Section Styles */
+.pdf-section {
+  border-top: 2px solid #e5e7eb;
+  padding-top: 20px;
+  margin-top: 20px;
+}
+
+.pdf-section h3 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #1e40af;
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+}
+
+.no-pdf-message {
+  text-align: center;
+  padding: 40px 20px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 2px dashed #d1d5db;
+}
+
+.no-pdf-message svg {
+  margin-bottom: 10px;
+}
+
+.no-pdf-message p {
+  color: #6b7280;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.pdf-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pdf-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.pdf-item:hover {
+  background: #f3f4f6;
+  border-color: #0066cc;
+  box-shadow: 0 2px 8px rgba(0, 102, 204, 0.1);
+}
+
+.pdf-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.pdf-filename {
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 4px 0;
+  font-size: 0.95rem;
+}
+
+.pdf-meta {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin: 0 0 4px 0;
+}
+
+.pdf-description {
+  font-size: 0.9rem;
+  color: #374151;
+  margin: 4px 0 0 0;
+  font-style: italic;
+}
+
+.pdf-view-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #0066cc;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.pdf-view-btn:hover {
+  background: #0052a3;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+}
+
+.pdf-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: #8b5cf6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pdf-btn:hover:not(:disabled) {
+  background: #7c3aed;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.pdf-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Spinning animation for loading */
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================
+   ⭐ NEW STYLES FOR ALL FEATURES
+   ============================================ */
+
+/* Stipulated Time Styling */
+.stipulated-time {
+  display: inline-block;
+  padding: 6px 12px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.stipulated-time.nil-value {
+  background: #f5f5f5;
+  color: #9e9e9e;
+  font-style: italic;
+}
+
+/* Status Badge - PENDING in RED */
+.status-badge.pending,
+.status-badge.status-pending-red {
+  background: #ffebee !important;
+  color: #c62828 !important;
+  font-weight: 600;
+}
+
+/* Status Badge - BLOCKED (New Status) */
+.status-badge.blocked {
+  background: #fff3e0;
+  color: #e65100;
+  font-weight: 600;
+}
+
+/* Feedback Badge Styles */
+.feedback-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.feedback-badge.feedback-positive {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.feedback-badge.feedback-negative {
+  background: #ffebee;
+  color: #c62828;
+}
+
+/* Feedback Actions */
+.feedback-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-feedback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-feedback:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.btn-feedback.btn-like {
+  color: #4caf50;
+}
+
+.btn-feedback.btn-like:hover {
+  background: #e8f5e9;
+  border-color: #4caf50;
+}
+
+.btn-feedback.btn-like.active {
+  background: #4caf50;
+  color: white;
+  border-color: #4caf50;
+}
+
+.btn-feedback.btn-dislike {
+  color: #f44336;
+}
+
+.btn-feedback.btn-dislike:hover {
+  background: #ffebee;
+  border-color: #f44336;
+}
+
+.btn-feedback.btn-dislike.active {
+  background: #f44336;
+  color: white;
+  border-color: #f44336;
+}
+
+.badge-pending-red {
+  background: #ffebee !important;
+  color: #c62828 !important;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 6px;
+  display: inline-block;
+}

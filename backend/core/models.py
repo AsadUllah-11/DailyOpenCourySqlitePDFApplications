@@ -16,19 +16,19 @@ class User(AbstractUser):
     def __str__(self):
         return f"{self.username} - {self.get_role_display()}"
 
-
 class OpenCourtApplication(models.Model):
     STATUS_CHOICES = [
         ('PENDING', 'Pending'),
         ('HEARD', 'Heard'),
         ('REFERRED', 'Referred to Legal Assistance'),
         ('CLOSED', 'Closed'),
+        ('BLOCKED', 'Blocked'),  # ⭐ NEW STATUS ADDED
     ]
     
     FEEDBACK_CHOICES = [
         ('POSITIVE', 'Positive'),
         ('NEGATIVE', 'Negative'),
-        ('PENDING', 'Pending'),
+        ('PENDING', 'Pending'),  # Keep in model but won't show in UI
     ]
     
     sr_no = models.IntegerField(unique=True)
@@ -46,6 +46,9 @@ class OpenCourtApplication(models.Model):
     days = models.IntegerField(null=True, blank=True)
     feedback = models.CharField(max_length=20, choices=FEEDBACK_CHOICES, default='PENDING')
     dairy_ps = models.CharField(max_length=100, blank=True)
+    
+    # ⭐ NEW FIELD: Stipulated Time
+    stipulated_time = models.CharField(max_length=100, blank=True, default='')
     
     remarks = models.TextField(blank=True)
     video_response = models.FileField(upload_to='video_responses/', null=True, blank=True)
@@ -76,6 +79,7 @@ class OpenCourtApplication(models.Model):
     
     def __str__(self):
         return f"{self.dairy_no} - {self.name}"
+
 
 class VideoFeedback(models.Model):
     FEEDBACK_CHOICES = [

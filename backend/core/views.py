@@ -22,6 +22,8 @@ from .serializers import (
     VideoFeedbackSerializer,
     PDFApplicationSerializer,
 )
+from .pagination import StandardResultsPagination  
+from .filters import OpenCourtApplicationFilter   
 
 User = get_user_model()
 
@@ -118,6 +120,13 @@ def current_user(request):
 # ⚡ OPTIMIZED APPLICATION VIEWSET
 # =====================================================
 
+# Update the OpenCourtApplicationViewSet class (around line 121)
+
+
+# =====================================================
+# ⚡ OPTIMIZED APPLICATION VIEWSET
+# =====================================================
+
 class OpenCourtApplicationViewSet(viewsets.ModelViewSet):
     """OPTIMIZED ViewSet with Pagination, Filtering, and Search"""
     
@@ -149,15 +158,73 @@ class OpenCourtApplicationViewSet(viewsets.ModelViewSet):
         """Set created_by to current user"""
         serializer.save(created_by=self.request.user)
     
+    def create(self, request, *args, **kwargs):
+        """Override create to handle file uploads and PDF applications"""
+        try:
+            # Get the data
+            data = request.data.copy()
+            
+            # Get files
+            video_response = request.FILES.get('video_response')
+            supporting_documents = request.FILES.get('supporting_documents')
+            pdf_application = request.FILES.get('pdf_application')
+            pdf_description = data.get('pdf_description', '')
+            
+            # Remove PDF fields from application data
+            data.pop('pdf_application', None)
+            data.pop('pdf_description', None)
+            
+            # Add files to data if present
+            if video_response:
+                data['video_response'] = video_response
+            if supporting_documents:
+                data['supporting_documents'] = supporting_documents
+            
+            # Create the application
+            serializer = self.get_serializer(data=data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            
+            application = serializer.instance
+            
+            # If PDF application is provided, create PDF record
+            if pdf_application:
+                PDFApplication.objects.create(
+                    application=application,
+                    pdf_file=pdf_application,
+                    file_name=pdf_application.name,
+                    file_size=pdf_application.size,
+                    description=pdf_description,
+                    uploaded_by=request.user
+                )
+            
+            headers = self.get_success_headers(serializer.data)
+            return Response(
+                serializer.data, 
+                status=status.HTTP_201_CREATED, 
+                headers=headers
+            )
+            
+        except Exception as e:
+            print(f"Error creating application: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return Response(
+                {'error': str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+    
     @action(detail=True, methods=['patch'])
     def update_status(self, request, pk=None):
-        """Update application status"""
+        """Update application status (including new BLOCKED status)"""
         application = self.get_object()
         new_status = request.data.get('status')
         
-        if new_status not in dict(OpenCourtApplication.STATUS_CHOICES):
+        # Validate status - now includes BLOCKED
+        valid_statuses = ['PENDING', 'HEARD', 'REFERRED', 'CLOSED', 'BLOCKED']
+        if new_status not in valid_statuses:
             return Response(
-                {'error': 'Invalid status'},
+                {'error': f'Invalid status. Must be one of: {", ".join(valid_statuses)}'},
                 status=status.HTTP_400_BAD_REQUEST
             )
         
@@ -174,9 +241,11 @@ class OpenCourtApplicationViewSet(viewsets.ModelViewSet):
         feedback = request.data.get('feedback')
         remarks = request.data.get('remarks', '')
         
-        if feedback not in dict(OpenCourtApplication.FEEDBACK_CHOICES):
+        # Validate feedback
+        valid_feedbacks = ['POSITIVE', 'NEGATIVE', 'PENDING']
+        if feedback not in valid_feedbacks:
             return Response(
-                {'error': 'Invalid feedback'},
+                {'error': f'Invalid feedback. Must be one of: {", ".join(valid_feedbacks)}'},
                 status=status.HTTP_400_BAD_REQUEST
             )
         
@@ -187,10 +256,98 @@ class OpenCourtApplicationViewSet(viewsets.ModelViewSet):
         
         serializer = self.get_serializer(application)
         return Response(serializer.data)
+    
+    # ⭐ NEW METHOD: Update Stipulated Time
+    @action(detail=True, methods=['patch'])
+    def update_stipulated_time(self, request, pk=None):
+        """Update application stipulated time"""
+        application = self.get_object()
+        stipulated_time = request.data.get('stipulated_time', '')
+        
+        # Update the stipulated time field
+        application.stipulated_time = stipulated_time
+        application.save(update_fields=['stipulated_time', 'updated_at'])
+        
+        serializer = self.get_serializer(application)
+        return Response(serializer.data)
+    
+    # ⭐ OPTIONAL: Bulk update method
+    @action(detail=False, methods=['post'])
+    def bulk_update_status(self, request):
+        """Bulk update status for multiple applications"""
+        application_ids = request.data.get('application_ids', [])
+        new_status = request.data.get('status')
+        
+        if not application_ids:
+            return Response(
+                {'error': 'No application IDs provided'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        valid_statuses = ['PENDING', 'HEARD', 'REFERRED', 'CLOSED', 'BLOCKED']
+        if new_status not in valid_statuses:
+            return Response(
+                {'error': f'Invalid status. Must be one of: {", ".join(valid_statuses)}'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Update all applications
+        updated_count = OpenCourtApplication.objects.filter(
+            id__in=application_ids
+        ).update(status=new_status)
+        
+        return Response({
+            'message': f'Successfully updated {updated_count} applications',
+            'updated_count': updated_count
+        })
+    
+    # ⭐ OPTIONAL: Get application by dairy number
+    @action(detail=False, methods=['get'])
+    def by_dairy_number(self, request):
+        """Get application by dairy number"""
+        dairy_no = request.query_params.get('dairy_no')
+        
+        if not dairy_no:
+            return Response(
+                {'error': 'Dairy number is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            application = OpenCourtApplication.objects.get(dairy_no=dairy_no)
+            serializer = self.get_serializer(application)
+            return Response(serializer.data)
+        except OpenCourtApplication.DoesNotExist:
+            return Response(
+                {'error': f'Application with dairy number {dairy_no} not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+    
+    # ⭐ OPTIONAL: Get statistics for a specific application
+    @action(detail=True, methods=['get'])
+    def statistics(self, request, pk=None):
+        """Get statistics related to this application"""
+        application = self.get_object()
+        
+        # Get related statistics
+        same_police_station = OpenCourtApplication.objects.filter(
+            police_station=application.police_station
+        ).count()
+        
+        same_category = OpenCourtApplication.objects.filter(
+            category=application.category
+        ).count()
+        
+        return Response({
+            'application_id': application.id,
+            'dairy_no': application.dairy_no,
+            'same_police_station_count': same_police_station,
+            'same_category_count': same_category,
+            'has_pdf': application.pdf_documents.exists(),
+            'pdf_count': application.pdf_documents.count(),
+        })
 
 
-# =====================================================
-# EXCEL UPLOAD
 # =====================================================
 
 @api_view(['POST'])
@@ -604,93 +761,32 @@ def video_feedback_stats(request):
 # =====================================================
 
 # Replace the PDFApplicationViewSet class with this:
-
 class PDFApplicationViewSet(viewsets.ModelViewSet):
-    """PDF Applications - Admin only"""
+    """ViewSet for PDF Applications"""
+    
     queryset = PDFApplication.objects.select_related('application', 'uploaded_by').all()
     serializer_class = PDFApplicationSerializer
     permission_classes = [IsAuthenticated]
-    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['file_name', 'application__dairy_no', 'application__name', 'description']
-    ordering_fields = ['uploaded_at', 'file_name']
-    ordering = ['-uploaded_at']
+    
+    # ⭐ ADD THESE LINES
+    filter_backends = [django_filters.DjangoFilterBackend]
+    filterset_fields = ['application']  # Allow filtering by application ID
     
     def get_queryset(self):
-        """Only admins can access"""
-        if self.request.user.role != 'ADMIN':
-            return PDFApplication.objects.none()
-        return PDFApplication.objects.select_related('application', 'uploaded_by').all()
-    
-    def create(self, request, *args, **kwargs):
-        """Override create to add detailed logging"""
-        print("=" * 50)
-        print("PDF UPLOAD REQUEST")
-        print("=" * 50)
-        print(f"User: {request.user}")
-        print(f"User Role: {request.user.role}")
-        print(f"Request Data: {request.data}")
-        print(f"Request Files: {request.FILES}")
-        print("=" * 50)
+        """Filter PDFs by application"""
+        queryset = PDFApplication.objects.select_related('application', 'uploaded_by').all()
         
-        try:
-            # Get the data
-            application_id = request.data.get('application')
-            pdf_file = request.FILES.get('pdf_file')
-            description = request.data.get('description', '')
-            
-            print(f"Application ID: {application_id}")
-            print(f"PDF File: {pdf_file}")
-            print(f"Description: {description}")
-            
-            # Validate
-            if not application_id:
-                print("ERROR: No application ID provided")
-                return Response(
-                    {'error': 'Application ID is required'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-            
-            if not pdf_file:
-                print("ERROR: No PDF file provided")
-                return Response(
-                    {'error': 'PDF file is required'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-            
-            # Check if application exists
-            try:
-                application = OpenCourtApplication.objects.get(id=application_id)
-                print(f"Found application: {application.dairy_no}")
-            except OpenCourtApplication.DoesNotExist:
-                print(f"ERROR: Application with ID {application_id} not found")
-                return Response(
-                    {'error': 'Application not found'},
-                    status=status.HTTP_404_NOT_FOUND
-                )
-            
-            # Create PDF record
-            pdf_application = PDFApplication.objects.create(
-                application=application,
-                pdf_file=pdf_file,
-                file_name=pdf_file.name,
-                file_size=pdf_file.size,
-                description=description,
-                uploaded_by=request.user
-            )
-            
-            print(f"SUCCESS: PDF created with ID {pdf_application.id}")
-            
-            serializer = self.get_serializer(pdf_application)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-            
-        except Exception as e:
-            print(f"EXCEPTION: {str(e)}")
-            import traceback
-            traceback.print_exc()
-            return Response(
-                {'error': str(e)},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+        # ⭐ IMPORTANT: Filter by application ID from query params
+        application_id = self.request.query_params.get('application', None)
+        if application_id:
+            queryset = queryset.filter(application_id=application_id)
+        
+        return queryset
+    
+    def perform_create(self, serializer):
+        """Set uploaded_by to current user"""
+        serializer.save(uploaded_by=self.request.user)
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])

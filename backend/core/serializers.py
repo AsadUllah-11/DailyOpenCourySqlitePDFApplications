@@ -1,28 +1,49 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import OpenCourtApplication, VideoFeedback
-from . models import OpenCourtApplication
-# Add this import at the top if not already there
 from .models import OpenCourtApplication, VideoFeedback, PDFApplication
+
 User = get_user_model()
+
+
+# =====================================================
+# USER SERIALIZER
+# =====================================================
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'role', 'phone', 'police_station', 'division', 'first_name', 'last_name']
+        fields = [
+            'id', 'username', 'email', 'role', 'phone', 
+            'police_station', 'division', 'first_name', 'last_name'
+        ]
         read_only_fields = ['id']
 
+
+# =====================================================
+# OPEN COURT APPLICATION SERIALIZER
+# =====================================================
 
 class OpenCourtApplicationSerializer(serializers.ModelSerializer):
     created_by_name = serializers.CharField(source='created_by.username', read_only=True)
     
     class Meta:
         model = OpenCourtApplication
-        fields = '__all__'
+        fields = [
+            'id', 'sr_no', 'dairy_no', 'name', 'contact', 'marked_to', 
+            'date', 'marked_by', 'timeline', 'police_station', 'division', 
+            'category', 'status', 'days', 'feedback', 'dairy_ps',
+            'stipulated_time',  # ⭐ NEW FIELD ADDED
+            'remarks', 'video_response', 'supporting_documents',
+            'created_at', 'updated_at', 'created_by', 'created_by_name'
+        ]
         read_only_fields = ['created_at', 'updated_at', 'created_by']
 
 
-class ApplicationStatsSerializer(serializers. Serializer):
+# =====================================================
+# STATISTICS SERIALIZERS
+# =====================================================
+
+class ApplicationStatsSerializer(serializers.Serializer):
     total_applications = serializers.IntegerField()
     pending = serializers.IntegerField()
     heard = serializers.IntegerField()
@@ -43,6 +64,11 @@ class PoliceStationStatsSerializer(serializers.Serializer):
     pending = serializers.IntegerField()
     heard = serializers.IntegerField()
 
+
+# =====================================================
+# VIDEO FEEDBACK SERIALIZER
+# =====================================================
+
 class VideoFeedbackSerializer(serializers.ModelSerializer):
     file_size_mb = serializers.ReadOnlyField()
     reviewed_by_name = serializers.CharField(source='reviewed_by.username', read_only=True)
@@ -58,17 +84,15 @@ class VideoFeedbackSerializer(serializers.ModelSerializer):
         read_only_fields = ['submitted_date', 'reviewed_by', 'reviewed_at']
 
 
-
-
-
-
-# Add this new serializer at the end of the file
+# =====================================================
+# PDF APPLICATION SERIALIZER
+# =====================================================
 
 class PDFApplicationSerializer(serializers.ModelSerializer):
     file_size_mb = serializers.ReadOnlyField()
     uploaded_by_name = serializers.CharField(source='uploaded_by.username', read_only=True)
     
-    # Application details
+    # Application details (nested from related OpenCourtApplication)
     dairy_no = serializers.CharField(source='application.dairy_no', read_only=True)
     applicant_name = serializers.CharField(source='application.name', read_only=True)
     police_station = serializers.CharField(source='application.police_station', read_only=True)

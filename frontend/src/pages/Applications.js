@@ -4,11 +4,11 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   getApplications,
-  exportApplications,  // ⚡ ADD THIS
+  exportApplications,
   getPoliceStations, 
   getCategories,
   updateApplicationStatus,
-  updateApplicationFeedback 
+  updateApplicationFeedback
 } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { 
@@ -99,7 +99,7 @@ const Applications = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
-      setPage(1); // Reset to page 1 on new search
+      setPage(1);
     }, 500);
     return () => clearTimeout(timer);
   }, [search]);
@@ -118,10 +118,8 @@ const Applications = () => {
     setLoading(page === 1);
     setRefreshing(page !== 1);
     try {
-      // ⚡ BUILD ORDERING STRING
       const ordering = sortDirection === 'desc' ? `-${sortField}` : sortField;
       
-      // ⚡ CALL API WITH PAGINATION AND FILTERS
       const data = await getApplications({
         page,
         page_size: pageSize,
@@ -135,7 +133,6 @@ const Applications = () => {
         ordering
       });
       
-      // ⚡ SET PAGINATED DATA
       setApplications(data.results || []);
       setTotalCount(data.count || 0);
       setTotalPages(Math.ceil((data.count || 0) / pageSize));
@@ -155,11 +152,9 @@ const Applications = () => {
         getCategories()
       ]);
       
-      // ✅ Deduplicate police stations
       const uniquePS = getUniqueValues(psData);
       setPoliceStations(uniquePS);
       
-      // ✅ Deduplicate categories
       const uniqueCat = getUniqueValues(catData);
       setCategories(uniqueCat);
       
@@ -173,13 +168,20 @@ const Applications = () => {
     await fetchApplications();
   };
 
-  const handleStatusUpdate = async (id, newStatus) => {
-    try {
-      await updateApplicationStatus(id, newStatus);
-      fetchApplications();
-    } catch (error) {
-      console.error('Error updating status:', error);
-      alert('Failed to update status');
+  const handleStatusUpdate = async (id, currentStatus) => {
+    // ⭐ UPDATED: Now includes BLOCKED status
+    const statuses = ['PENDING', 'HEARD', 'REFERRED', 'CLOSED', 'BLOCKED'];
+    const statusIndex = statuses.indexOf(currentStatus);
+    const nextStatus = statuses[(statusIndex + 1) % statuses.length];
+    
+    if (window.confirm(`Change status from ${currentStatus} to ${nextStatus}?`)) {
+      try {
+        await updateApplicationStatus(id, nextStatus);
+        fetchApplications();
+      } catch (error) {
+        console.error('Error updating status:', error);
+        alert('Failed to update status');
+      }
     }
   };
 
@@ -197,24 +199,20 @@ const Applications = () => {
     window.location.href = `tel:${contact}`;
   };
 
-  // ⭐ Fullscreen Toggle
   const toggleFullscreen = () => {
     setIsFullscreen(!isFullscreen);
   };
 
-  // ⭐ View Details in Modal
   const handleViewDetails = (app) => {
     setSelectedApplication(app);
     setShowDetailModal(true);
   };
 
-  // ⭐ Close Modal
   const closeDetailModal = () => {
     setShowDetailModal(false);
     setSelectedApplication(null);
   };
 
-  // Sorting Handler
   const handleSort = (field) => {
     if (sortField === field) {
       setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
@@ -224,123 +222,112 @@ const Applications = () => {
     }
   };
 
-  // ⚡ EXPORT ALL MATCHING RECORDS TO EXCEL
-// At the top, update imports:
-
-// Replace the exportAllToExcel function with this:
-const exportAllToExcel = async () => {
-  const hasFilters = search || statusFilter || selectedPS || selectedCategory || feedbackFilter || fromDate || toDate;
-  
-  const confirmMessage = hasFilters
-    ? `Export all ${totalCount} filtered applications to Excel?`
-    : `Export ALL ${totalCount} applications from database to Excel?`;
-  
-  if (!window.confirm(confirmMessage)) {
-    return;
-  }
-
-  setExporting(true);
-  try {
-    console.log('📥 Fetching all matching applications...');
+  const exportAllToExcel = async () => {
+    const hasFilters = search || statusFilter || selectedPS || selectedCategory || feedbackFilter || fromDate || toDate;
     
-    // ⚡ BUILD ORDERING STRING
-    const ordering = sortDirection === 'desc' ? `-${sortField}` : sortField;
+    const confirmMessage = hasFilters
+      ? `Export all ${totalCount} filtered applications to Excel?`
+      : `Export ALL ${totalCount} applications from database to Excel?`;
     
-    // ⚡ USE NEW EXPORT ENDPOINT (NO PAGINATION LIMIT)
-    const data = await exportApplications({
-      search: debouncedSearch,
-      status: statusFilter,
-      police_station: selectedPS,
-      category: selectedCategory,
-      feedback: feedbackFilter,
-      from_date: fromDate,
-      to_date: toDate,
-      ordering
-    });
-    
-    const allData = data.results || [];
-    
-    if (allData.length === 0) {
-      alert('⚠️ No data to export!');
+    if (!window.confirm(confirmMessage)) {
       return;
     }
 
-    console.log(`📊 Exporting ${allData.length} applications...`);
+    setExporting(true);
+    try {
+      console.log('📥 Fetching all matching applications...');
+      
+      const ordering = sortDirection === 'desc' ? `-${sortField}` : sortField;
+      
+      const data = await exportApplications({
+        search: debouncedSearch,
+        status: statusFilter,
+        police_station: selectedPS,
+        category: selectedCategory,
+        feedback: feedbackFilter,
+        from_date: fromDate,
+        to_date: toDate,
+        ordering
+      });
+      
+      const allData = data.results || [];
+      
+      if (allData.length === 0) {
+        alert('⚠️ No data to export!');
+        return;
+      }
 
-    // Prepare data for export
-    const exportData = allData.map((app) => ({
-      'SR NO': app.sr_no || '',
-      'DAIRY NO': app.dairy_no || '',
-      'NAME': app.name || '',
-      'CONTACT': app.contact || '',
-      'POLICE STATION': app.police_station || '',
-      'DIVISION': app.division || 'N/A',
-      'CATEGORY': app.category || '',
-      'MARKED TO': app.marked_to || 'N/A',
-      'MARKED BY': app.marked_by || 'N/A',
-      'STATUS': app.status || '',
-      'FEEDBACK': app.feedback || '',
-      'DATE': app.date ? formatDate(app.date) : 'N/A',
-      'TIMELINE': app.timeline || 'N/A',
-      'DAYS': app.days || 'N/A',
-      'DAIRY PS': app.dairy_ps || 'N/A',
-      'REMARKS': app.remarks || ''
-    }));
+      console.log(`📊 Exporting ${allData.length} applications...`);
 
-    // Create worksheet
-    const ws = XLSX.utils.json_to_sheet(exportData);
+      const exportData = allData.map((app) => ({
+        'SR NO': app.sr_no || '',
+        'DAIRY NO': app.dairy_no || '',
+        'NAME': app.name || '',
+        'CONTACT': app.contact || '',
+        'POLICE STATION': app.police_station || '',
+        'DIVISION': app.division || 'N/A',
+        'CATEGORY': app.category || '',
+        'MARKED TO': app.marked_to || 'N/A',
+        'MARKED BY': app.marked_by || 'N/A',
+        'STIPULATED TIME': app.stipulated_time || 'Nil', // ⭐ NEW
+        'STATUS': app.status || '',
+        'FEEDBACK': app.feedback || '',
+        'DATE': app.date ? formatDate(app.date) : 'N/A',
+        'TIMELINE': app.timeline || 'N/A',
+        'DAYS': app.days || 'N/A',
+        'DAIRY PS': app.dairy_ps || 'N/A',
+        'REMARKS': app.remarks || ''
+      }));
 
-    // Set column widths
-    const colWidths = [
-      { wch: 8 }, { wch: 15 }, { wch: 25 }, { wch: 15 },
-      { wch: 20 }, { wch: 15 }, { wch: 25 }, { wch: 20 },
-      { wch: 20 }, { wch: 12 }, { wch: 12 }, { wch: 15 },
-      { wch: 15 }, { wch: 8 }, { wch: 15 }, { wch: 40 }
-    ];
-    ws['!cols'] = colWidths;
+      const ws = XLSX.utils.json_to_sheet(exportData);
 
-    // Create workbook
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Applications');
+      const colWidths = [
+        { wch: 8 }, { wch: 15 }, { wch: 25 }, { wch: 15 },
+        { wch: 20 }, { wch: 15 }, { wch: 25 }, { wch: 20 },
+        { wch: 20 }, { wch: 15 }, { wch: 12 }, { wch: 12 }, 
+        { wch: 15 }, { wch: 15 }, { wch: 8 }, { wch: 15 }, { wch: 40 }
+      ];
+      ws['!cols'] = colWidths;
 
-    // Generate filename
-    const today = new Date().toISOString().split('T')[0];
-    let filename = hasFilters 
-      ? `Filtered_Applications_${today}` 
-      : `All_Applications_${today}`;
-    
-    if (fromDate && toDate) {
-      filename += `_${fromDate}_to_${toDate}`;
-    } else if (fromDate) {
-      filename += `_from_${fromDate}`;
-    } else if (toDate) {
-      filename += `_until_${toDate}`;
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Applications');
+
+      const today = new Date().toISOString().split('T')[0];
+      let filename = hasFilters 
+        ? `Filtered_Applications_${today}` 
+        : `All_Applications_${today}`;
+      
+      if (fromDate && toDate) {
+        filename += `_${fromDate}_to_${toDate}`;
+      } else if (fromDate) {
+        filename += `_from_${fromDate}`;
+      } else if (toDate) {
+        filename += `_until_${toDate}`;
+      }
+      
+      if (selectedPS) {
+        filename += `_${selectedPS.replace(/\s+/g, '_')}`;
+      }
+      
+      if (statusFilter) {
+        filename += `_${statusFilter}`;
+      }
+      
+      filename += '.xlsx';
+
+      XLSX.writeFile(wb, filename);
+
+      const message = hasFilters
+        ? `✅ Successfully exported ${exportData.length} filtered applications!`
+        : `✅ Successfully exported ALL ${exportData.length} applications!`;
+      alert(message);
+    } catch (error) {
+      console.error('Error exporting applications:', error);
+      alert('❌ Failed to export applications. Please try again.');
+    } finally {
+      setExporting(false);
     }
-    
-    if (selectedPS) {
-      filename += `_${selectedPS.replace(/\s+/g, '_')}`;
-    }
-    
-    if (statusFilter) {
-      filename += `_${statusFilter}`;
-    }
-    
-    filename += '.xlsx';
-
-    // Save file
-    XLSX.writeFile(wb, filename);
-
-    const message = hasFilters
-      ? `✅ Successfully exported ${exportData.length} filtered applications!`
-      : `✅ Successfully exported ALL ${exportData.length} applications!`;
-    alert(message);
-  } catch (error) {
-    console.error('Error exporting applications:', error);
-    alert('❌ Failed to export applications. Please try again.');
-  } finally {
-    setExporting(false);
-  }
-};
+  };
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -352,12 +339,14 @@ const exportAllToExcel = async () => {
     });
   };
 
+  // ⭐ UPDATED: Added BLOCKED status and red PENDING
   const getStatusBadgeClass = (status) => {
     const classes = {
-      'PENDING': 'badge badge-warning',
+      'PENDING': 'badge badge-pending-red',  // ⭐ RED
       'HEARD': 'badge badge-success',
       'REFERRED': 'badge badge-info',
-      'CLOSED': 'badge badge-secondary'
+      'CLOSED': 'badge badge-secondary',
+      'BLOCKED': 'badge badge-blocked'       // ⭐ NEW
     };
     return classes[status] || 'badge badge-secondary';
   };
@@ -440,7 +429,6 @@ const exportAllToExcel = async () => {
           </p>
         </div>
         <div className="header-actions">
-          {/* ⚡ SMART Export All Button */}
           <button 
             onClick={exportAllToExcel} 
             className="export-excel-btn"
@@ -465,7 +453,6 @@ const exportAllToExcel = async () => {
             Refresh
           </button>
           
-          {/* ⭐ Fullscreen Button */}
           <button 
             onClick={toggleFullscreen} 
             className="fullscreen-btn"
@@ -494,7 +481,6 @@ const exportAllToExcel = async () => {
           )}
         </div>
 
-        {/* From Date Input */}
         <div className="date-input-wrapper">
           <Calendar size={18} className="date-icon" />
           <input
@@ -512,7 +498,6 @@ const exportAllToExcel = async () => {
           )}
         </div>
 
-        {/* To Date Input */}
         <div className="date-input-wrapper">
           <Calendar size={18} className="date-icon" />
           <input
@@ -540,6 +525,7 @@ const exportAllToExcel = async () => {
           <option value="HEARD">Heard</option>
           <option value="REFERRED">Referred</option>
           <option value="CLOSED">Closed</option>
+          <option value="BLOCKED">Blocked</option>
         </select>
 
         <select 
@@ -610,19 +596,15 @@ const exportAllToExcel = async () => {
                     POLICE STATION <SortIcon field="police_station" />
                   </div>
                 </th>
-                <th onClick={() => handleSort('division')} className="sortable-header">
-                  <div className="th-content">
-                    DIVISION <SortIcon field="division" />
-                  </div>
-                </th>
                 <th onClick={() => handleSort('category')} className="sortable-header">
                   <div className="th-content">
                     CATEGORY <SortIcon field="category" />
                   </div>
                 </th>
-                <th onClick={() => handleSort('marked_to')} className="sortable-header">
+                {/* ⭐ NEW: Stipulated Time Column */}
+                <th onClick={() => handleSort('stipulated_time')} className="sortable-header">
                   <div className="th-content">
-                    MARKED TO <SortIcon field="marked_to" />
+                    STIPULATED TIME <SortIcon field="stipulated_time" />
                   </div>
                 </th>
                 <th onClick={() => handleSort('status')} className="sortable-header">
@@ -646,7 +628,7 @@ const exportAllToExcel = async () => {
             <tbody>
               {applications.length === 0 ? (
                 <tr>
-                  <td colSpan="12" className="no-data-cell">
+                  <td colSpan="11" className="no-data-cell">
                     <FileText size={48} color="#ccc" />
                     <p>No applications found</p>
                   </td>
@@ -668,25 +650,71 @@ const exportAllToExcel = async () => {
                       </button>
                     </td>
                     <td className="cell-ps">{app.police_station}</td>
-                    <td className="cell-division">{app.division || 'N/A'}</td>
                     <td className="cell-category">{app.category}</td>
-                    <td className="cell-marked">{app.marked_to || 'N/A'}</td>
-                    <td className="cell-status">
-                      <span className={getStatusBadgeClass(app.status)}>
-                        {app.status}
+                    
+                    {/* ⭐ NEW: Stipulated Time Column */}
+                    <td className="cell-stipulated">
+                      <span className={`stipulated-time ${!app.stipulated_time ? 'nil-value' : ''}`}>
+                        {app.stipulated_time || 'Nil'}
                       </span>
                     </td>
+                    
+                    {/* ⭐ UPDATED: Status with red PENDING */}
+                    {/* ⭐ UPDATED: Status - Display only, not clickable */}
+<td className="cell-status">
+  <span className={getStatusBadgeClass(app.status)}>
+    {app.status}
+  </span>
+</td>
+                    
+                    {/* ⭐ UPDATED: Feedback - Show only Positive/Negative badges */}
                     <td className="cell-feedback">
-                      <span className={getFeedbackBadgeClass(app.feedback)}>
-                        {app.feedback}
-                      </span>
+                      {app.feedback !== 'PENDING' ? (
+                        <span className={getFeedbackBadgeClass(app.feedback)}>
+                          {app.feedback === 'POSITIVE' ? (
+                            <>
+                              <ThumbsUp size={14} style={{ marginRight: '4px' }} />
+                              Positive
+                            </>
+                          ) : (
+                            <>
+                              <ThumbsDown size={14} style={{ marginRight: '4px' }} />
+                              Negative
+                            </>
+                          )}
+                        </span>
+                      ) : (
+                        <div className="feedback-actions">
+                          <button
+                            className="btn-feedback btn-like"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleFeedbackUpdate(app.id, 'POSITIVE');
+                            }}
+                            title="Mark as Positive"
+                          >
+                            <ThumbsUp size={16} />
+                          </button>
+                          <button
+                            className="btn-feedback btn-dislike"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleFeedbackUpdate(app.id, 'NEGATIVE');
+                            }}
+                            title="Mark as Negative"
+                          >
+                            <ThumbsDown size={16} />
+                          </button>
+                        </div>
+                      )}
                     </td>
+                    
                     <td className="cell-date">{formatDate(app.date)}</td>
                     <td className="cell-actions">
                       <button 
-                        onClick={() => handleViewDetails(app)}
+                        onClick={() => navigate(`/applications/${app.id}`)}
                         className="view-btn"
-                        title="View Details"
+                        title="View Full Details & Edit"
                       >
                         <Eye size={16} />
                       </button>
@@ -699,7 +727,7 @@ const exportAllToExcel = async () => {
         </div>
       </div>
 
-      {/* ⚡ PAGINATION CONTROLS */}
+      {/* Pagination Controls */}
       {totalPages > 1 && (
         <div className="pagination-container">
           <div className="pagination-info">
@@ -752,167 +780,6 @@ const exportAllToExcel = async () => {
               <option value={100}>100</option>
               <option value={200}>200</option>
             </select>
-          </div>
-        </div>
-      )}
-
-      {/* ⭐ Detail Modal */}
-      {showDetailModal && selectedApplication && (
-        <div className="modal-overlay-detail" onClick={closeDetailModal}>
-          <div className="modal-content-detail" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header-detail">
-              <h2>Application Details</h2>
-              <button onClick={closeDetailModal} className="modal-close-btn">
-                <X size={24} />
-              </button>
-            </div>
-
-            <div className="modal-body-detail">
-              {/* Basic Information */}
-              <div className="detail-section-modal">
-                <h3>Basic Information</h3>
-                <div className="status-badges-modal">
-                  <span className={getStatusBadgeClass(selectedApplication.status)}>
-                    {selectedApplication.status}
-                  </span>
-                  <span className={getFeedbackBadgeClass(selectedApplication.feedback)}>
-                    {selectedApplication.feedback}
-                  </span>
-                </div>
-                <div className="info-grid-modal">
-                  <div className="info-item-modal">
-                    <FileText size={18} className="info-icon-modal" />
-                    <div>
-                      <label>SR Number:</label>
-                      <span>{selectedApplication.sr_no}</span>
-                    </div>
-                  </div>
-                  <div className="info-item-modal">
-                    <FileText size={18} className="info-icon-modal" />
-                    <div>
-                      <label>Dairy Number:</label>
-                      <span>{selectedApplication.dairy_no}</span>
-                    </div>
-                  </div>
-                  <div className="info-item-modal">
-                    <User size={18} className="info-icon-modal" />
-                    <div>
-                      <label>Applicant Name:</label>
-                      <span>{selectedApplication.name}</span>
-                    </div>
-                  </div>
-                  <div className="info-item-modal">
-                    <Phone size={18} className="info-icon-modal" />
-                    <div>
-                      <label>Contact Number:</label>
-                      <button onClick={() => handleCall(selectedApplication.contact)} className="phone-btn">
-                        <Phone size={14} />
-                        {selectedApplication.contact}
-                      </button>
-                    </div>
-                  </div>
-                  <div className="info-item-modal">
-                    <Calendar size={18} className="info-icon-modal" />
-                    <div>
-                      <label>Date:</label>
-                      <span>{formatDate(selectedApplication.date)}</span>
-                    </div>
-                  </div>
-                  <div className="info-item-modal">
-                    <Clock size={18} className="info-icon-modal" />
-                    <div>
-                      <label>Timeline:</label>
-                      <span>{selectedApplication.timeline || 'N/A'}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Location Details */}
-              <div className="detail-section-modal">
-                <h3>Location Details</h3>
-                <div className="info-grid-modal">
-                  <div className="info-item-modal">
-                    <MapPin size={18} className="info-icon-modal" />
-                    <div>
-                      <label>Police Station:</label>
-                      <span>{selectedApplication.police_station}</span>
-                    </div>
-                  </div>
-                  <div className="info-item-modal">
-                    <MapPin size={18} className="info-icon-modal" />
-                    <div>
-                      <label>Division:</label>
-                      <span>{selectedApplication.division || 'N/A'}</span>
-                    </div>
-                  </div>
-                  <div className="info-item-modal">
-                    <FileText size={18} className="info-icon-modal" />
-                    <div>
-                      <label>Dairy PS:</label>
-                      <span>{selectedApplication.dairy_ps || 'N/A'}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Case Details */}
-              <div className="detail-section-modal">
-                <h3>Case Details</h3>
-                <div className="info-grid-modal">
-                  <div className="info-item-modal">
-                    <Tag size={18} className="info-icon-modal" />
-                    <div>
-                      <label>Category:</label>
-                      <span>{selectedApplication.category}</span>
-                    </div>
-                  </div>
-                  <div className="info-item-modal">
-                    <User size={18} className="info-icon-modal" />
-                    <div>
-                      <label>Marked To:</label>
-                      <span>{selectedApplication.marked_to || 'Not Assigned'}</span>
-                    </div>
-                  </div>
-                  <div className="info-item-modal">
-                    <User size={18} className="info-icon-modal" />
-                    <div>
-                      <label>Marked By:</label>
-                      <span>{selectedApplication.marked_by || 'N/A'}</span>
-                    </div>
-                  </div>
-                  <div className="info-item-modal">
-                    <Clock size={18} className="info-icon-modal" />
-                    <div>
-                      <label>Days:</label>
-                      <span>{selectedApplication.days || 'N/A'}</span>
-                    </div>
-                  </div>
-                </div>
-                {selectedApplication.remarks && (
-                  <div className="remarks-section-modal">
-                    <label>Remarks:</label>
-                    <p>{selectedApplication.remarks}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="modal-footer-detail">
-              <button 
-                onClick={() => { 
-                  navigate(`/applications/${selectedApplication.id}`); 
-                  closeDetailModal(); 
-                }} 
-                className="export-excel-btn"
-              >
-                <Eye size={16} />
-                Full Details & Edit
-              </button>
-              <button onClick={closeDetailModal} className="refresh-btn">
-                Close
-              </button>
-            </div>
           </div>
         </div>
       )}
