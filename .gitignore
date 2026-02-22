@@ -5,6 +5,9 @@ env/
 # Node dependencies
 node_modules/
 
+# Build artifacts
+frontend/build/
+
 # Python cache
 __pycache__/
 *.pyc
