@@ -114,6 +114,7 @@ const ApplicationDetail = () => {
   };
 
   // ⭐ NEW: Upload PDF
+// ⭐ NEW: Upload PDF
 const handleUploadPDF = async () => {
   if (!selectedFile) {
     setUploadError('Please select a PDF file');
@@ -125,44 +126,65 @@ const handleUploadPDF = async () => {
   setUploadSuccess('');
 
   const formData = new FormData();
-  formData.append('application', id);  // ⚠️ Make sure 'id' is a number
-  formData.append('pdf_file', selectedFile);
-  formData.append('description', pdfDescription);
+  formData.append('application', id);  // ✅ Application ID as number
+  formData.append('pdf_file', selectedFile);  // ✅ PDF file
+  formData.append('description', pdfDescription || '');  // ✅ Description (optional)
 
-  // ⭐ ADD CONSOLE LOGS FOR DEBUGGING
-  console.log('Uploading PDF:');
-  console.log('- Application ID:', id);
-  console.log('- File:', selectedFile);
-  console.log('- Description:', pdfDescription);
+  // ⭐ DEBUGGING: Log what we're sending
+  console.log('📤 Uploading PDF:');
+  console.log('  - Application ID:', id);
+  console.log('  - File:', selectedFile.name);
+  console.log('  - File Size:', selectedFile.size, 'bytes');
+  console.log('  - Description:', pdfDescription);
 
   try {
     const response = await uploadPDFApplication(formData);
-    console.log('Upload success:', response);
+    console.log('✅ Upload success:', response);
+    
     setUploadSuccess('✅ PDF uploaded successfully!');
     
+    // Close modal and refresh after 1.5 seconds
     setTimeout(() => {
       setShowUploadModal(false);
       setSelectedFile(null);
       setPdfDescription('');
       setUploadError('');
       setUploadSuccess('');
-      fetchPDFs();
+      fetchPDFs();  // Refresh PDF list
     }, 1500);
+    
   } catch (error) {
-    console.error('Upload error:', error);
-    console.error('Error response:', error.response?.data);
+    console.error('❌ Upload error:', error);
+    console.error('❌ Error response:', error.response?.data);
     
-    // ⭐ SHOW DETAILED ERROR
-    const errorMessage = error.response?.data?.error 
-      || error.response?.data?.message
-      || error.message 
-      || '❌ Failed to upload PDF';
+    // ⭐ DETAILED ERROR HANDLING
+    let errorMessage = 'Failed to upload PDF';
     
-    setUploadError(errorMessage);
+    if (error.response?.data) {
+      if (typeof error.response.data === 'string') {
+        errorMessage = error.response.data;
+      } else if (error.response.data.error) {
+        errorMessage = error.response.data.error;
+      } else if (error.response.data.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.response.data.pdf_file) {
+        errorMessage = `PDF file error: ${error.response.data.pdf_file[0]}`;
+      } else if (error.response.data.application) {
+        errorMessage = `Application error: ${error.response.data.application[0]}`;
+      } else {
+        errorMessage = JSON.stringify(error.response.data);
+      }
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+    
+    setUploadError(`❌ ${errorMessage}`);
+    
   } finally {
     setUpdating(false);
   }
 };
+
   // ⭐ NEW: Delete PDF
   const handleDeletePDF = async (pdfId) => {
     if (!window.confirm('Are you sure you want to delete this PDF?')) {

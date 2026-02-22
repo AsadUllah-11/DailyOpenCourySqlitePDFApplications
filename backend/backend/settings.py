@@ -115,7 +115,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'core.User'
-
+FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760  
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
 ]

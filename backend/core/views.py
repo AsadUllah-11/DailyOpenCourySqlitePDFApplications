@@ -760,7 +760,6 @@ def video_feedback_stats(request):
 # PDF APPLICATIONS
 # =====================================================
 
-# Replace the PDFApplicationViewSet class with this:
 class PDFApplicationViewSet(viewsets.ModelViewSet):
     """ViewSet for PDF Applications"""
     
@@ -786,6 +785,43 @@ class PDFApplicationViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """Set uploaded_by to current user"""
         serializer.save(uploaded_by=self.request.user)
+    
+    def create(self, request, *args, **kwargs):
+        """Override create to handle file uploads with better error handling"""
+        try:
+            # ⭐ NEW: Validate required fields
+            if 'pdf_file' not in request.FILES:
+                return Response(
+                    {'error': 'PDF file is required'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            if 'application' not in request.data:
+                return Response(
+                    {'error': 'Application ID is required'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # ⭐ NEW: Verify application exists
+            try:
+                application = OpenCourtApplication.objects.get(id=request.data['application'])
+            except OpenCourtApplication.DoesNotExist:
+                return Response(
+                    {'error': 'Application not found'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            
+            # Call parent create method
+            return super().create(request, *args, **kwargs)
+            
+        except Exception as e:
+            print(f"❌ Error uploading PDF: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return Response(
+                {'error': str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 
 @api_view(['POST'])

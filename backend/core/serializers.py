@@ -85,6 +85,10 @@ class VideoFeedbackSerializer(serializers.ModelSerializer):
 
 
 # =====================================================
+# =====================================================
+# PDF APPLICATION SERIALIZER
+# =====================================================
+# =====================================================
 # PDF APPLICATION SERIALIZER
 # =====================================================
 
@@ -98,6 +102,10 @@ class PDFApplicationSerializer(serializers.ModelSerializer):
     police_station = serializers.CharField(source='application.police_station', read_only=True)
     status = serializers.CharField(source='application.status', read_only=True)
     
+    # ⭐ FIX: Make these fields NOT required - they'll be auto-populated
+    file_name = serializers.CharField(required=False)
+    file_size = serializers.IntegerField(required=False)
+    
     class Meta:
         model = PDFApplication
         fields = [
@@ -105,4 +113,15 @@ class PDFApplicationSerializer(serializers.ModelSerializer):
             'file_size_mb', 'uploaded_by', 'uploaded_by_name', 'uploaded_at',
             'description', 'dairy_no', 'applicant_name', 'police_station', 'status'
         ]
-        read_only_fields = ['uploaded_at', 'uploaded_by', 'file_size']
+        read_only_fields = ['uploaded_at', 'uploaded_by']
+    
+    def create(self, validated_data):
+        """Override create to automatically set file metadata"""
+        pdf_file = validated_data.get('pdf_file')
+        
+        # ⭐ FIX: Auto-populate file_name and file_size from uploaded file
+        if pdf_file:
+            validated_data['file_name'] = pdf_file.name
+            validated_data['file_size'] = pdf_file.size
+        
+        return super().create(validated_data)
