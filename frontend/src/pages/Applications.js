@@ -1,7 +1,7 @@
 // frontend/src/pages/Applications.js
 
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   getApplications,
   exportApplications,
@@ -59,6 +59,7 @@ const getUniqueValues = (array) => {
 const Applications = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   
   // ⚡ PAGINATION STATE (Server-Side)
   const [page, setPage] = useState(1);
@@ -94,6 +95,17 @@ const Applications = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedApplication, setSelectedApplication] = useState(null);
+
+  // ⚡ Read URL param on mount to auto-apply status filter from popup
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const statusParam = params.get('status');
+    if (statusParam) {
+      setStatusFilter(statusParam);
+    } else {
+      setStatusFilter('');
+    }
+  }, [location.search]);
 
   // ⚡ DEBOUNCE SEARCH (wait 500ms after user stops typing)
   useEffect(() => {

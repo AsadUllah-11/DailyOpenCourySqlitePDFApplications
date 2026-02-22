@@ -11,6 +11,7 @@ import {
   AlertCircle 
 } from 'lucide-react';
 import CasesCounter from '../components/CasesCounter';
+import PendingPopup from '../components/PendingPopup';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 const COLORS = [
@@ -28,6 +29,7 @@ const Dashboard = () => {
   const { user } = useAuth();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showPendingPopup, setShowPendingPopup] = useState(false);
 
   useEffect(() => {
     fetchStats();
@@ -37,6 +39,9 @@ const Dashboard = () => {
     try {
       const data = await getDashboardStats();
       setStats(data);
+      if ((data?.overall_stats?.pending || 0) > 0) {
+        setShowPendingPopup(true);
+      }
     } catch (error) {
       console.error('Error fetching stats:', error);
     } finally {
@@ -102,6 +107,12 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard">
+      {showPendingPopup && (
+        <PendingPopup
+          pendingCount={stats?.overall_stats?.pending || 0}
+          onClose={() => setShowPendingPopup(false)}
+        />
+      )}
       <div className="page-header">
         <h2>Dashboard</h2>
         <p>Welcome, {user?.first_name || user?.username}!</p>
