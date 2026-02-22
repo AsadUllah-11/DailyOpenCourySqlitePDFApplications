@@ -126,7 +126,8 @@ const Dashboard = () => {
           onClose={() => setShowExceededPopup(false)}
           label="Time Exceeded"
           navigateTo="/applications?timeline=EXCEEDED"
-          bottomOffset={showPendingPopup ? '127px' : '16px'}
+          Icon={AlertCircle}
+          bottomOffset={showPendingPopup ? '100px' : '16px'}
         />
       )}
       <div className="page-header">

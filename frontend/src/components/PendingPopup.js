@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, Clock, ArrowRight } from 'lucide-react';
+import { X, Clock, ChevronRight } from 'lucide-react';
 import './PendingPopup.css';
 
 const PendingPopup = ({
@@ -9,6 +9,8 @@ const PendingPopup = ({
   label = 'Pending',
   navigateTo = '/applications?status=PENDING',
   bottomOffset = '20px',
+  Icon = Clock,
+  ActionIcon = ChevronRight,
 }) => {
   const navigate = useNavigate();
 
@@ -23,27 +25,28 @@ const PendingPopup = ({
     <div className="pending-popup-overlay" style={{ bottom: bottomOffset }}>
       <div className="pending-popup-card">
         <button className="pending-popup-close" onClick={onClose} title="Close">
-          <X size={14} />
+          <X size={11} />
         </button>
 
-        <div className="pending-popup-header">
+        <div className="pending-popup-body">
           <div className="pending-popup-icon">
-            <Clock size={15} />
+            <Icon size={13} />
           </div>
-          <div>
-            <p className="pending-popup-title">{label}</p>
-            <p className="pending-popup-count">{pendingCount}</p>
-          </div>
+          <p className="pending-popup-message">
+            You have <strong>{pendingCount}</strong> {label}{' '}
+            {pendingCount === 1 ? 'Case' : 'Cases'}
+          </p>
         </div>
 
-        <p className="pending-popup-message">
-          You have {pendingCount} {label} {pendingCount === 1 ? 'Case' : 'Cases'}
-        </p>
-
-        <button className="pending-popup-btn" onClick={handleView}>
-          View Cases
-          <ArrowRight size={13} />
-        </button>
+        <div className="pending-popup-footer">
+          <button
+            className="pending-popup-action-btn"
+            onClick={handleView}
+            title="View Cases"
+          >
+            <ActionIcon size={13} />
+          </button>
+        </div>
       </div>
     </div>
   );
