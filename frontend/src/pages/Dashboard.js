@@ -117,7 +117,7 @@ const Dashboard = () => {
           onClose={() => setShowPendingPopup(false)}
           label="Pending"
           navigateTo="/applications?status=PENDING"
-          bottomOffset="20px"
+          bottomOffset="16px"
         />
       )}
       {showExceededPopup && (
@@ -126,7 +126,7 @@ const Dashboard = () => {
           onClose={() => setShowExceededPopup(false)}
           label="Time Exceeded"
           navigateTo="/applications?timeline=EXCEEDED"
-          bottomOffset={showPendingPopup ? '140px' : '20px'}
+          bottomOffset={showPendingPopup ? '127px' : '16px'}
         />
       )}
       <div className="page-header">

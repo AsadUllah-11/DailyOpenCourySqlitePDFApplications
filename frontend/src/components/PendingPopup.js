@@ -28,7 +28,7 @@ const PendingPopup = ({
 
         <div className="pending-popup-header">
           <div className="pending-popup-icon">
-            <Clock size={18} />
+            <Clock size={15} />
           </div>
           <div>
             <p className="pending-popup-title">{label}</p>

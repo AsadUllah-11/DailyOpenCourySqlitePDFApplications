@@ -1,18 +1,18 @@
 /* ==================== */
-/* PENDING POPUP NOTIFICATION — COMPACT */
+/* PENDING POPUP NOTIFICATION — MINI */
 /* ==================== */
 
 .pending-popup-overlay {
   position: fixed;
-  right: 20px;
+  right: 16px;
   z-index: 1000;
-  animation: slideInRight 0.35s ease;
+  animation: slideInRight 0.3s ease;
 }
 
 @keyframes slideInRight {
   from {
     opacity: 0;
-    transform: translateX(50px);
+    transform: translateX(40px);
   }
   to {
     opacity: 1;
@@ -22,18 +22,18 @@
 
 .pending-popup-card {
   background: var(--white);
-  border-radius: 10px;
-  box-shadow: 0 4px 20px rgba(30, 64, 175, 0.18), 0 1px 6px rgba(0, 0, 0, 0.08);
-  padding: 0.7rem 0.9rem 0.75rem;
-  width: 280px;
-  border-left: 4px solid var(--warning);
+  border-radius: 8px;
+  box-shadow: 0 3px 14px rgba(30, 64, 175, 0.15), 0 1px 4px rgba(0, 0, 0, 0.07);
+  padding: 0.5rem 0.65rem 0.55rem;
+  width: 240px;
+  border-left: 3px solid var(--warning);
   position: relative;
 }
 
 .pending-popup-close {
   position: absolute;
-  top: 0.4rem;
-  right: 0.4rem;
+  top: 0.3rem;
+  right: 0.3rem;
   background: none;
   border: none;
   cursor: pointer;
@@ -41,7 +41,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.2rem;
+  padding: 0.15rem;
   border-radius: 50%;
   transition: background 0.2s, color 0.2s;
 }
@@ -54,16 +54,16 @@
 .pending-popup-header {
   display: flex;
   align-items: center;
-  gap: 0.55rem;
-  margin-bottom: 0.45rem;
+  gap: 0.45rem;
+  margin-bottom: 0.3rem;
 }
 
 .pending-popup-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 26px;
+  height: 26px;
   background: #fef3c7;
   border-radius: 50%;
   color: var(--warning);
@@ -71,7 +71,7 @@
 }
 
 .pending-popup-title {
-  font-size: 0.7rem;
+  font-size: 0.62rem;
   font-weight: 600;
   color: var(--text-secondary);
   text-transform: uppercase;
@@ -80,7 +80,7 @@
 }
 
 .pending-popup-count {
-  font-size: 1.35rem;
+  font-size: 1.05rem;
   font-weight: 800;
   color: var(--warning);
   line-height: 1.1;
@@ -88,24 +88,24 @@
 }
 
 .pending-popup-message {
-  font-size: 0.82rem;
+  font-size: 0.73rem;
   font-weight: 600;
   color: var(--text-primary);
-  margin: 0 0 0.55rem 0;
+  margin: 0 0 0.4rem 0;
 }
 
 .pending-popup-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.35rem;
+  gap: 0.3rem;
   width: 100%;
-  padding: 0.42rem 0.75rem;
+  padding: 0.3rem 0.6rem;
   background: linear-gradient(135deg, var(--primary-blue), var(--light-blue));
   color: var(--white);
   border: none;
-  border-radius: 6px;
-  font-size: 0.8rem;
+  border-radius: 5px;
+  font-size: 0.72rem;
   font-weight: 600;
   cursor: pointer;
   transition: opacity 0.2s, transform 0.15s;
