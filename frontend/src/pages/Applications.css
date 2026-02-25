@@ -1568,3 +1568,13 @@
   border-radius: 6px;
   display: inline-block;
 }
+
+/* Pending row highlight */
+.data-table tbody tr.data-row.pending-row,
+.data-table tbody tr.data-row.pending-row:nth-child(even) {
+  background: #ffe5e5;
+}
+
+.data-table tbody tr.data-row.pending-row:hover {
+  background: #ffd5d5;
+}

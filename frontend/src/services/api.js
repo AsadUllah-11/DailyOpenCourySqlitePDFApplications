@@ -101,6 +101,7 @@ export const getApplications = async (params = {}) => {
     if (params.from_date) queryParams.append('from_date', params.from_date);
     if (params.to_date) queryParams.append('to_date', params.to_date);
     if (params.marked_to) queryParams.append('marked_to', params.marked_to);
+    if (params.timeline) queryParams.append('timeline', params.timeline);
     
     // Ordering
     if (params.ordering) queryParams.append('ordering', params.ordering);
@@ -262,6 +263,7 @@ export const exportApplications = async (params = {}) => {
     if (params.feedback) queryParams.append('feedback', params.feedback);
     if (params.from_date) queryParams.append('from_date', params.from_date);
     if (params.to_date) queryParams.append('to_date', params.to_date);
+    if (params.timeline) queryParams.append('timeline', params.timeline);
     if (params.ordering) queryParams.append('ordering', params.ordering);
     
     const response = await api.get(`/export-applications/?${queryParams.toString()}`);

@@ -1,7 +1,7 @@
 // frontend/src/pages/Applications.js
 
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   getApplications,
   exportApplications,
@@ -59,6 +59,7 @@ const getUniqueValues = (array) => {
 const Applications = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   
   // ⚡ PAGINATION STATE (Server-Side)
   const [page, setPage] = useState(1);
@@ -81,6 +82,7 @@ const Applications = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [feedbackFilter, setFeedbackFilter] = useState('');
+  const [timelineFilter, setTimelineFilter] = useState('');
   
   // Date Filter State
   const [fromDate, setFromDate] = useState('');
@@ -95,6 +97,15 @@ const Applications = () => {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedApplication, setSelectedApplication] = useState(null);
 
+  // ⚡ Read URL params on mount to auto-apply filters from popups
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const statusParam = params.get('status');
+    const timelineParam = params.get('timeline');
+    setStatusFilter(statusParam || '');
+    setTimelineFilter(timelineParam || '');
+  }, [location.search]);
+
   // ⚡ DEBOUNCE SEARCH (wait 500ms after user stops typing)
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -107,7 +118,7 @@ const Applications = () => {
   // ⚡ FETCH DATA WHEN FILTERS CHANGE (Server-Side)
   useEffect(() => {
     fetchApplications();
-  }, [page, pageSize, debouncedSearch, statusFilter, selectedPS, selectedCategory, feedbackFilter, fromDate, toDate, sortField, sortDirection]);
+  }, [page, pageSize, debouncedSearch, statusFilter, selectedPS, selectedCategory, feedbackFilter, fromDate, toDate, sortField, sortDirection, timelineFilter]);
 
   // Fetch metadata on mount
   useEffect(() => {
@@ -130,6 +141,7 @@ const Applications = () => {
         feedback: feedbackFilter,
         from_date: fromDate,
         to_date: toDate,
+        timeline: timelineFilter,
         ordering
       });
       
@@ -223,7 +235,7 @@ const Applications = () => {
   };
 
   const exportAllToExcel = async () => {
-    const hasFilters = search || statusFilter || selectedPS || selectedCategory || feedbackFilter || fromDate || toDate;
+    const hasFilters = search || statusFilter || selectedPS || selectedCategory || feedbackFilter || fromDate || toDate || timelineFilter;
     
     const confirmMessage = hasFilters
       ? `Export all ${totalCount} filtered applications to Excel?`
@@ -247,6 +259,7 @@ const Applications = () => {
         feedback: feedbackFilter,
         from_date: fromDate,
         to_date: toDate,
+        timeline: timelineFilter,
         ordering
       });
       
@@ -367,6 +380,7 @@ const Applications = () => {
     setSelectedPS('');
     setSelectedCategory('');
     setFeedbackFilter('');
+    setTimelineFilter('');
     setFromDate('');
     setToDate('');
     setPage(1);
@@ -415,7 +429,7 @@ const Applications = () => {
     );
   }
 
-  const hasActiveFilters = search || statusFilter || selectedPS || selectedCategory || feedbackFilter || fromDate || toDate;
+  const hasActiveFilters = search || statusFilter || selectedPS || selectedCategory || feedbackFilter || fromDate || toDate || timelineFilter;
 
   return (
     <div className={`applications-table-page ${isFullscreen ? 'fullscreen-mode' : ''}`}>
@@ -528,6 +542,16 @@ const Applications = () => {
           <option value="BLOCKED">Blocked</option>
         </select>
 
+        <select
+          className="filter-select-compact"
+          value={timelineFilter}
+          onChange={(e) => setTimelineFilter(e.target.value)}
+        >
+          <option value="">All Timeline</option>
+          <option value="WITHIN">Within Time Limit</option>
+          <option value="EXCEEDED">Time Limit Exceeded</option>
+        </select>
+
         <select 
           className="filter-select-compact" 
           value={selectedPS} 
@@ -635,7 +659,7 @@ const Applications = () => {
                 </tr>
               ) : (
                 applications.map((app) => (
-                  <tr key={app.id} className="data-row">
+                  <tr key={app.id} className={`data-row${app.status === 'PENDING' ? ' pending-row' : ''}`}>
                     <td className="cell-sr">{app.sr_no}</td>
                     <td className="cell-dairy">{app.dairy_no}</td>
                     <td className="cell-name">{app.name}</td>

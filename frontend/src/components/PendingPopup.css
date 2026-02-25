@@ -1,0 +1,113 @@
+/* ==================== */
+/* PENDING POPUP NOTIFICATION */
+/* ==================== */
+
+.pending-popup-overlay {
+  position: fixed;
+  right: 16px;
+  z-index: 1000;
+  animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.pending-popup-card {
+  background: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 3px 14px rgba(30, 64, 175, 0.15), 0 1px 4px rgba(0, 0, 0, 0.07);
+  padding: 0.45rem 0.6rem 0.45rem;
+  width: 220px;
+  border-left: 3px solid var(--warning);
+  position: relative;
+}
+
+.pending-popup-close {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.12rem;
+  border-radius: 50%;
+  transition: background 0.2s, color 0.2s;
+}
+
+.pending-popup-close:hover {
+  background: var(--border-color);
+  color: var(--text-primary);
+}
+
+.pending-popup-body {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.35rem;
+  padding-right: 1rem;
+}
+
+.pending-popup-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: #fef3c7;
+  border-radius: 50%;
+  color: var(--warning);
+  flex-shrink: 0;
+}
+
+.pending-popup-message {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.35;
+}
+
+.pending-popup-message strong {
+  color: var(--warning);
+  font-weight: 700;
+}
+
+.pending-popup-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.pending-popup-action-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-blue), var(--light-blue));
+  color: var(--white);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s, transform 0.15s;
+}
+
+.pending-popup-action-btn:hover {
+  opacity: 0.85;
+  transform: scale(1.12);
+}
+
+.pending-popup-action-btn:active {
+  transform: scale(1);
+}
