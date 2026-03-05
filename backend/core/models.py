@@ -16,22 +16,24 @@ class User(AbstractUser):
     def __str__(self):
         return f"{self.username} - {self.get_role_display()}"
 
+
 class OpenCourtApplication(models.Model):
     STATUS_CHOICES = [
         ('PENDING', 'Pending'),
         ('HEARD', 'Heard'),
         ('REFERRED', 'Referred to Legal Assistance'),
         ('CLOSED', 'Closed'),
-        ('BLOCKED', 'Blocked'),  # ⭐ NEW STATUS ADDED
+        ('BLOCKED', 'Blocked'),
     ]
     
     FEEDBACK_CHOICES = [
         ('POSITIVE', 'Positive'),
         ('NEGATIVE', 'Negative'),
-        ('PENDING', 'Pending'),  # Keep in model but won't show in UI
+        ('PENDING', 'Pending'),
     ]
     
-    sr_no = models.IntegerField(unique=True)
+    # ⭐ UPDATED: Auto-generated sr_no using MAX + 1
+    sr_no = models.IntegerField(unique=True, blank=True, null=True)
     dairy_no = models.CharField(max_length=100)
     name = models.CharField(max_length=200)
     contact = models.CharField(max_length=15)
@@ -47,7 +49,7 @@ class OpenCourtApplication(models.Model):
     feedback = models.CharField(max_length=20, choices=FEEDBACK_CHOICES, default='PENDING')
     dairy_ps = models.CharField(max_length=100, blank=True)
     
-    # ⭐ NEW FIELD: Stipulated Time
+    # Stipulated Time
     stipulated_time = models.CharField(max_length=100, blank=True, default='')
     
     remarks = models.TextField(blank=True)
@@ -57,6 +59,18 @@ class OpenCourtApplication(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='created_applications')
+    
+    # ⭐ AUTO-GENERATE sr_no using MAX + 1
+    def save(self, *args, **kwargs):
+        if self.sr_no is None:
+            # Get the highest sr_no and add 1
+            last_application = OpenCourtApplication.objects.all().order_by('sr_no').last()
+            if last_application and last_application.sr_no:
+                self.sr_no = last_application.sr_no + 1
+            else:
+                self.sr_no = 1  # Start from 1 if no applications exist
+        
+        super(OpenCourtApplication, self).save(*args, **kwargs)
     
     class Meta:
         ordering = ['-created_at']
@@ -118,11 +132,7 @@ class VideoFeedback(models.Model):
         if self.file_size:
             return round(self.file_size / (1024 * 1024), 2)
         return None
-    
 
-
-
-# Add this new model at the end of the file
 
 class PDFApplication(models.Model):
     """PDF Applications uploaded by admin"""

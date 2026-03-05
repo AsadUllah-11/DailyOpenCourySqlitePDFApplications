@@ -14,6 +14,7 @@ import UploadExcel from './pages/UploadExcel';
 import Analytics from './pages/Analytics';
 import Media from './pages/Media';
 import PDFApplications from './pages/PDFApplications';
+import NewApplication from './pages/NewApplication';
 
 import './App.css';
 import VideoFeedback from './pages/VideoFeedback';
@@ -46,7 +47,14 @@ function App() {
               </Layout>
             </PrivateRoute>
           } />
-
+        {/* ⭐ NEW: Manual Application Entry */}
+<Route path="/new-application" element={
+  <PrivateRoute>
+    <Layout>
+      <NewApplication />
+    </Layout>
+  </PrivateRoute>
+} />
           {/* Application Detail */}
           <Route path="/applications/:id" element={
             <PrivateRoute>

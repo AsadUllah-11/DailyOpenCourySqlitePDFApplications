@@ -131,11 +131,17 @@ export const getApplicationById = async (id) => {
   }
 };
 
-// POST - Create new application
-export const createApplication = async (data) => {
+// ⭐ NEW: Create application manually (with file upload support)
+export const createApplication = async (formData) => {
   try {
-    console.log('📝 Creating new application:', data);
-    const response = await api.post('/applications/', data);
+    console.log('📝 Creating new application...');
+    
+    const response = await api.post('/applications/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    
     console.log('✅ Application created successfully');
     return response.data;
   } catch (error) {
@@ -205,6 +211,11 @@ export const updateApplicationFeedback = async (id, feedback, remarks = '') => {
   }
 };
 
+// ⭐ NEW: Update Stipulated Time
+export const updateApplicationStipulatedTime = (id, stipulated_time) => {
+  return api.patch(`/applications/${id}/update_stipulated_time/`, { stipulated_time });
+};
+
 // ==========================================
 // DASHBOARD APIs
 // ==========================================
@@ -234,20 +245,26 @@ export const getPoliceStations = async () => {
 };
 
 export const getCategories = async () => {
-  try{
+  try {
     const response = await api.get('/categories/');
     return response.data;
-  } 
-  catch (error) {
+  } catch (error) {
     console.error('❌ Error fetching categories:', error);
     throw error;
   }
 };
 
+// ⭐ NEW: Get divisions list
 export const getDivisions = async () => {
-  const response = await api.get('/divisions/');
-  return response.data;
+  try {
+    const response = await api.get('/divisions/');
+    return response.data;
+  } catch (error) {
+    console.error('❌ Error fetching divisions:', error);
+    return [];
+  }
 };
+
 // ⚡ EXPORT ALL APPLICATIONS (No pagination limits)
 export const exportApplications = async (params = {}) => {
   try {
@@ -277,6 +294,7 @@ export const exportApplications = async (params = {}) => {
     throw error;
   }
 };
+
 // ==========================================
 // EXCEL UPLOAD API
 // ==========================================
@@ -302,7 +320,10 @@ export const uploadExcel = async (file) => {
   }
 };
 
-// ⭐ STAFF MANAGEMENT APIs
+// ==========================================
+// STAFF MANAGEMENT APIs
+// ==========================================
+
 export const getAllStaff = async () => {
   const response = await api.get('/staff/');
   return response.data;
@@ -382,15 +403,14 @@ export const getVideoFeedbackStats = async () => {
   }
 };
 
-// Add these functions before the export statement
+// ==========================================
+// PDF APPLICATIONS APIs
+// ==========================================
 
-// =====================================================
-// PDF APPLICATIONS
-// =====================================================
-
-// export const verifyDairyNumber = (dairyNo) => {
-//   return api.post('/verify-dairy-number/', { dairy_no: dairyNo });
-// };
+// ⭐ NEW: Verify dairy number before PDF upload
+export const verifyDairyNumber = (dairyNo) => {
+  return api.post('/verify-dairy-number/', { dairy_no: dairyNo });
+};
 
 export const uploadPDFApplication = (formData) => {
   return api.post('/pdf-applications/', formData, {
@@ -408,6 +428,11 @@ export const getPDFApplicationById = (id) => {
   return api.get(`/pdf-applications/${id}/`);
 };
 
+// ⭐ Get PDFs by Application ID
+export const getPDFsByApplication = (applicationId) => {
+  return api.get(`/pdf-applications/?application=${applicationId}`);
+};
+
 export const deletePDFApplication = (id) => {
   return api.delete(`/pdf-applications/${id}/`);
 };
@@ -415,36 +440,5 @@ export const deletePDFApplication = (id) => {
 export const getPDFStats = () => {
   return api.get('/pdf-application-stats/');
 };
-
-// // Get PDF applications for a specific application by dairy number
-// export const getPDFsByApplication = async (applicationId, dairyNo) => {
-//   try {
-//     // Search by dairy number instead of application ID
-//     const response = await api.get(`/pdf-applications/?search=${dairyNo}`);
-//     const pdfs = response.data.results || response.data;
-    
-//     // Return all PDFs that match the dairy number search
-//     return Array.isArray(pdfs) ? pdfs : [];
-//   } catch (error) {
-//     console.error('Error fetching PDFs for application:', error);
-//     return [];
-//   }
-// };
-// ⭐ NEW: Update Stipulated Time
-export const updateApplicationStipulatedTime = (id, stipulated_time) => {
-  return api.patch(`/applications/${id}/update_stipulated_time/`, { stipulated_time });
-};
-
-// ⭐ Get PDFs by Application ID
-export const getPDFsByApplication = (applicationId) => {
-  return api.get(`/pdf-applications/?application=${applicationId}`);
-};
-
-// ⭐ NEW: Verify dairy number (if not already present)
-export const verifyDairyNumber = (dairyNo) => {
-  return api.post('/verify-dairy-number/', { dairy_no: dairyNo });
-};
-
-
 
 export default api;

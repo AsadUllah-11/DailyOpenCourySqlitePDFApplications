@@ -1,0 +1,606 @@
+/* ================================================
+   NEW APPLICATION PAGE STYLES - COMPACT VERSION
+   ================================================ */
+
+.new-application-page {
+  padding: 1rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ================================================
+   COMPACT PAGE HEADER
+   ================================================ */
+
+.page-header-new-app {
+  margin-bottom: 1rem;
+}
+
+.page-header-new-app .back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.9rem;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  color: #374151;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 0.75rem;
+}
+
+.page-header-new-app .back-btn:hover {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+/* MUCH MORE COMPACT HEADER */
+.page-header-new-app .header-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 10px;
+  color: white;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+}
+
+.page-header-new-app .header-icon {
+  width: 42px;
+  height: 42px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  flex-shrink: 0;
+}
+
+.page-header-new-app .header-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.page-header-new-app h1 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 0 0 0.2rem 0;
+  line-height: 1.2;
+}
+
+.page-header-new-app p {
+  font-size: 0.8125rem;
+  margin: 0;
+  opacity: 0.9;
+  line-height: 1.3;
+}
+
+/* ================================================
+   FORM CONTAINER
+   ================================================ */
+
+.application-form {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* ================================================
+   COMPACT FORM SECTIONS
+   ================================================ */
+
+.form-section {
+  padding: 1.5rem 1.75rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.form-section:last-of-type {
+  border-bottom: none;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 2px solid #f3f4f6;
+}
+
+.section-header svg {
+  color: #667eea;
+  width: 18px;
+  height: 18px;
+}
+
+.section-header h2 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+/* ================================================
+   COMPACT FORM GRID
+   ================================================ */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+/* ================================================
+   COMPACT LABELS
+   ================================================ */
+
+.form-group label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.form-group label.required::after {
+  content: '*';
+  color: #ef4444;
+  font-weight: 700;
+}
+
+/* ================================================
+   COMPACT INPUTS
+   ================================================ */
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 0.65rem 0.9rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 7px;
+  font-size: 0.875rem;
+  color: #111827;
+  background: white;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-group input.error,
+.form-group select.error {
+  border-color: #ef4444;
+}
+
+.form-group input.error:focus,
+.form-group select.error:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 70px;
+}
+
+/* ⭐ FIX: Input with icon - NO ICON FOR DATE */
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Show icon only for phone input */
+.input-with-icon svg {
+  position: absolute;
+  left: 0.9rem;
+  color: #9ca3af;
+  pointer-events: none;
+  z-index: 1;
+  width: 16px;
+  height: 16px;
+}
+
+.input-with-icon input {
+  width: 100%;
+}
+
+/* Phone input with icon */
+.input-with-icon:has(input[type="text"]) input {
+  padding-left: 2.5rem !important;
+}
+
+/* Date input - NO ICON, normal padding */
+.input-with-icon:has(input[type="date"]) svg {
+  display: none;
+}
+
+.input-with-icon input[type="date"] {
+  padding-left: 0.9rem !important;
+  padding-right: 0.9rem !important;
+  cursor: pointer;
+}
+
+/* ================================================
+   SELECT STYLING
+   ================================================ */
+
+.form-group select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%236b7280' d='M5 7L1 3h8z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.9rem center;
+  padding-right: 2.5rem;
+  cursor: pointer;
+}
+
+/* ================================================
+   CUSTOM CATEGORY
+   ================================================ */
+
+.category-select-wrapper {
+  width: 100%;
+}
+
+.custom-category-wrapper {
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-start;
+}
+
+.custom-category-wrapper input {
+  flex: 1;
+}
+
+.cancel-custom-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.65rem 0.9rem;
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  border-radius: 7px;
+  color: #991b1b;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.cancel-custom-btn:hover {
+  background: #fca5a5;
+  color: white;
+}
+
+.cancel-custom-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.helper-text {
+  font-size: 0.75rem;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.2rem;
+}
+
+.helper-text svg {
+  color: #3b82f6;
+  flex-shrink: 0;
+  width: 13px;
+  height: 13px;
+}
+
+/* ================================================
+   COMPACT FILE UPLOAD
+   ================================================ */
+
+.file-upload-area {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.file-upload-label {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 1.25rem;
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  background: #f9fafb;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-align: center;
+}
+
+.file-upload-label:hover {
+  border-color: #667eea;
+  background: #f3f4f6;
+}
+
+.file-upload-label svg {
+  color: #667eea;
+  width: 20px;
+  height: 20px;
+}
+
+.file-upload-label span {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #111827;
+}
+
+.file-upload-label small {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.remove-file-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.85rem;
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  border-radius: 7px;
+  color: #991b1b;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.remove-file-btn:hover {
+  background: #fca5a5;
+  color: white;
+}
+
+.remove-file-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ================================================
+   ERROR TEXT
+   ================================================ */
+
+.error-text {
+  font-size: 0.75rem;
+  color: #ef4444;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* ================================================
+   FORM ACTIONS WITH MESSAGE
+   ================================================ */
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.85rem;
+  padding: 1.25rem 1.75rem;
+  background: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+  position: relative;
+}
+
+/* ⭐ MESSAGE ABOVE BUTTONS */
+.form-message-container {
+  position: absolute;
+  bottom: 100%;
+  left: 1.75rem;
+  right: 1.75rem;
+  margin-bottom: 0.75rem;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.form-message {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.85rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.form-message svg {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+}
+
+.form-message.success {
+  background: #d1fae5;
+  border: 1px solid #6ee7b7;
+  color: #065f46;
+}
+
+.form-message.error {
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  color: #991b1b;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.35rem;
+  border-radius: 7px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  font-family: inherit;
+}
+
+.btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 14px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+  background: white;
+  color: #374151;
+  border: 1.5px solid #e5e7eb;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+/* ================================================
+   LOADING SPINNER
+   ================================================ */
+
+.spinner-small {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ================================================
+   RESPONSIVE DESIGN
+   ================================================ */
+
+@media (max-width: 768px) {
+  .new-application-page {
+    padding: 0.75rem;
+  }
+
+  .page-header-new-app .header-content {
+    flex-direction: column;
+    text-align: center;
+    padding: 0.85rem 1rem;
+  }
+
+  .page-header-new-app h1 {
+    font-size: 1.2rem;
+  }
+
+  .page-header-new-app p {
+    font-size: 0.75rem;
+  }
+
+  .form-section {
+    padding: 1.25rem;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+
+  .form-group.full-width {
+    grid-column: 1;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    padding: 1rem 1.25rem;
+  }
+
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .custom-category-wrapper {
+    flex-direction: column;
+  }
+
+  .cancel-custom-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .form-message-container {
+    left: 1.25rem;
+    right: 1.25rem;
+  }
+}

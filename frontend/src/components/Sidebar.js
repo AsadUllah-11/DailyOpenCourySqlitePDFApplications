@@ -9,7 +9,8 @@ import {
   Users,
   Video,
   Film,
-  FileType  // ⭐ NEW ICON for PDF Applications
+  FileType,
+  FilePlus  // ⭐ NEW ICON
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import './Sidebar.css';
@@ -28,6 +29,13 @@ const Sidebar = () => {
       path: '/applications', 
       icon: FileText, 
       label: 'Applications', 
+      roles: ['ADMIN', 'STAFF'] 
+    },
+    // ⭐ NEW: Manual Application Entry
+    { 
+      path: '/new-application',
+      icon: FilePlus, 
+      label: 'New Application', 
       roles: ['ADMIN', 'STAFF'] 
     },
     // { 
@@ -49,7 +57,7 @@ const Sidebar = () => {
       roles: ['ADMIN'] 
     },
     { 
-      path: '/pdf-applications',  // ⭐ NEW: PDF Applications
+      path: '/pdf-applications',
       icon: FileType, 
       label: 'PDF Applications', 
       roles: ['ADMIN'] 

@@ -21,7 +21,7 @@ urlpatterns = [
     path('staff/', views.staff_management, name='staff_management'),
     path('staff/<int:user_id>/', views.staff_detail, name='staff_detail'),
     path('divisions/', views.divisions_list, name='divisions_list'),
-    
+    path('divisions/', views.divisions_list, name='divisions'),
     # Export endpoint
     path('export-applications/', views.export_applications, name='export_applications'),
     
