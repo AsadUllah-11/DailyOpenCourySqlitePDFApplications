@@ -604,3 +604,46 @@
     right: 1.25rem;
   }
 }
+
+/* ⭐ ADD THESE STYLES AT THE END */
+
+/* Dairy number input wrapper */
+.dairy-number-input-wrapper {
+  position: relative;
+}
+
+.checking-indicator {
+  position: absolute;
+  right: 0.9rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.75rem;
+  color: #667eea;
+  font-weight: 500;
+  pointer-events: none;
+}
+
+/* Existing application warning */
+.existing-app-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: #fef3c7;
+  border: 1px solid #fbbf24;
+  border-radius: 7px;
+  margin-top: 0.5rem;
+  font-size: 0.8125rem;
+  color: #92400e;
+}
+
+.existing-app-warning svg {
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+  color: #f59e0b;
+}
+
+.existing-app-warning strong {
+  display: block;
+  margin-bottom: 0.25rem;
+}

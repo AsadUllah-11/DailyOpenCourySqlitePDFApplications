@@ -1,5 +1,6 @@
 # backend/core/views.py
 
+
 from rest_framework import viewsets, status, filters
 from rest_framework.decorators import api_view, action, permission_classes
 from rest_framework.response import Response
@@ -927,3 +928,41 @@ def pdf_application_stats(request):
         'total': total,
         'total_size_mb': total_size_mb
     })
+
+
+
+# ⭐ NEW: Check if dairy number exists
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def check_dairy_number(request):
+    """Check if dairy number already exists"""
+    dairy_no = request.data.get('dairy_no', '').strip()
+    
+    if not dairy_no:
+        return Response(
+            {'exists': False, 'message': 'Dairy number is required'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    # Check if dairy number exists
+    exists = OpenCourtApplication.objects.filter(dairy_no=dairy_no).exists()
+    
+    if exists:
+        # Get the existing application details
+        existing_app = OpenCourtApplication.objects.filter(dairy_no=dairy_no).first()
+        return Response({
+            'exists': True,
+            'message': f'Dairy number {dairy_no} already exists',
+            'application': {
+                'id': existing_app.id,
+                'sr_no': existing_app.sr_no,
+                'name': existing_app.name,
+                'date': existing_app.date,
+                'police_station': existing_app.police_station
+            }
+        }, status=status.HTTP_200_OK)
+    
+    return Response({
+        'exists': False,
+        'message': 'Dairy number is available'
+    }, status=status.HTTP_200_OK)

@@ -16,13 +16,15 @@ import {
   Save,
   X,
   ArrowLeft,
-  Plus
+  Plus,
+  Info
 } from 'lucide-react';
 import { 
   createApplication, 
   getPoliceStations, 
   getCategories,
-  getDivisions 
+  getDivisions,
+  checkDairyNumber  // ⭐ NEW IMPORT
 } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import './NewApplication.css';
@@ -67,6 +69,11 @@ const NewApplication = () => {
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+  
+  // ⭐ NEW: Dairy number checking states
+  const [checkingDairy, setCheckingDairy] = useState(false);
+  const [dairyExists, setDairyExists] = useState(false);
+  const [existingAppInfo, setExistingAppInfo] = useState(null);
 
   // ✅ FIXED: Only 5 status options
   const statusOptions = [
@@ -131,6 +138,44 @@ const NewApplication = () => {
     }
   };
 
+  // ⭐ NEW: Check dairy number on blur
+  const handleDairyNumberBlur = async () => {
+    const dairyNo = formData.dairy_no.trim();
+    
+    if (!dairyNo) {
+      setDairyExists(false);
+      setExistingAppInfo(null);
+      return;
+    }
+
+    setCheckingDairy(true);
+    
+    try {
+      const response = await checkDairyNumber(dairyNo);
+      
+      if (response.exists) {
+        setDairyExists(true);
+        setExistingAppInfo(response.application);
+        setErrors(prev => ({ 
+          ...prev, 
+          dairy_no: `This dairy number already exists (SR NO: ${response.application.sr_no})` 
+        }));
+      } else {
+        setDairyExists(false);
+        setExistingAppInfo(null);
+        setErrors(prev => {
+          const newErrors = { ...prev };
+          delete newErrors.dairy_no;
+          return newErrors;
+        });
+      }
+    } catch (error) {
+      console.error('Error checking dairy number:', error);
+    } finally {
+      setCheckingDairy(false);
+    }
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -141,6 +186,12 @@ const NewApplication = () => {
     // Clear error for this field
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+
+    // ⭐ Reset dairy check when user changes dairy number
+    if (name === 'dairy_no') {
+      setDairyExists(false);
+      setExistingAppInfo(null);
     }
   };
 
@@ -196,6 +247,11 @@ const NewApplication = () => {
     if (!formData.category) newErrors.category = 'Category is required';
     if (!formData.date) newErrors.date = 'Date is required';
 
+    // ⭐ NEW: Check if dairy number exists
+    if (dairyExists) {
+      newErrors.dairy_no = `Dairy number already exists (SR NO: ${existingAppInfo?.sr_no})`;
+    }
+
     // Contact validation
     if (formData.contact && !/^\d{10,15}$/.test(formData.contact.replace(/[-\s]/g, ''))) {
       newErrors.contact = 'Enter a valid contact number';
@@ -208,6 +264,13 @@ const NewApplication = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // ⭐ PREVENT SUBMISSION if dairy number exists
+    if (dairyExists) {
+      setError(`Cannot create application: Dairy number ${formData.dairy_no} already exists!`);
+      setTimeout(() => setError(''), 5000);
+      return;
+    }
+
     if (!validateForm()) {
       setError('Please fix the errors in the form');
       setTimeout(() => setError(''), 5000);
@@ -248,7 +311,13 @@ const NewApplication = () => {
 
     } catch (error) {
       console.error('Error creating application:', error);
-      setError(error.response?.data?.error || 'Failed to create application. Please try again.');
+      
+      // ⭐ Check for duplicate dairy number error from backend
+      if (error.response?.data?.dairy_no) {
+        setError(`Dairy number already exists: ${error.response.data.dairy_no}`);
+      } else {
+        setError(error.response?.data?.error || 'Failed to create application. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -278,6 +347,8 @@ const NewApplication = () => {
     setErrors({});
     setSuccess('');
     setError('');
+    setDairyExists(false);
+    setExistingAppInfo(null);
   };
 
   return (
@@ -299,8 +370,6 @@ const NewApplication = () => {
         </div>
       </div>
 
-      {/* ⭐ REMOVED: Success/Error Messages from top */}
-
       {/* Form */}
       <form className="application-form" onSubmit={handleSubmit}>
         
@@ -315,15 +384,32 @@ const NewApplication = () => {
             
             <div className="form-group">
               <label className="required">Dairy Number</label>
-              <input
-                type="text"
-                name="dairy_no"
-                value={formData.dairy_no}
-                onChange={handleInputChange}
-                placeholder="Enter dairy number"
-                className={errors.dairy_no ? 'error' : ''}
-              />
+              <div className="dairy-number-input-wrapper">
+                <input
+                  type="text"
+                  name="dairy_no"
+                  value={formData.dairy_no}
+                  onChange={handleInputChange}
+                  onBlur={handleDairyNumberBlur}
+                  placeholder="Enter dairy number"
+                  className={errors.dairy_no ? 'error' : dairyExists ? 'error' : ''}
+                />
+                {checkingDairy && (
+                  <span className="checking-indicator">Checking...</span>
+                )}
+              </div>
               {errors.dairy_no && <span className="error-text">{errors.dairy_no}</span>}
+              
+              {/* ⭐ Show existing application info */}
+              {dairyExists && existingAppInfo && (
+                <div className="existing-app-warning">
+                  <Info size={16} />
+                  <div>
+                    <strong>Application already exists:</strong>
+                    <div>SR NO: {existingAppInfo.sr_no} | {existingAppInfo.name} | {existingAppInfo.police_station}</div>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="form-group">
@@ -607,7 +693,7 @@ const NewApplication = () => {
 
         {/* Form Actions */}
         <div className="form-actions">
-          {/* ⭐ NEW: Messages shown above buttons */}
+          {/* ⭐ Messages shown above buttons */}
           {(success || error) && (
             <div className="form-message-container">
               {success && (
@@ -637,7 +723,7 @@ const NewApplication = () => {
           <button
             type="submit"
             className="btn btn-primary"
-            disabled={loading}
+            disabled={loading || dairyExists}
           >
             {loading ? (
               <>

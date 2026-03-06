@@ -264,6 +264,16 @@ export const getDivisions = async () => {
     return [];
   }
 };
+// ⭐ NEW: Check if dairy number exists
+export const checkDairyNumber = async (dairyNo) => {
+  try {
+    const response = await api.post('/check-dairy-number/', { dairy_no: dairyNo });
+    return response.data;
+  } catch (error) {
+    console.error('Error checking dairy number:', error);
+    throw error;
+  }
+};
 
 // ⚡ EXPORT ALL APPLICATIONS (No pagination limits)
 export const exportApplications = async (params = {}) => {
